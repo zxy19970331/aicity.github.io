@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>广东省人工智能产业图 2026</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+/* ─────────────────────────────────────────────
+   CSS 变量 & 重置
+──────────────────────────────────────────────*/
+:root {
+  --navy:      #071e38;
+  --navy2:     #0c2a50;
+  --blue-d:    #133168;
+  --blue:      #1b4287;
+  --blue-m:    #2563b8;
+  --blue-b:    #3d82e0;
+  --cyan:      #00b8d4;
+  --cyan2:     #5dd6e6;
+  --ice:       #cde2f3;
+  --sky:       #e8f2fb;
+  --bg:        #f2f6fb;
+  --line:      rgba(17,55,120,.15);
+  --line2:     rgba(17,55,120,.08);
+  --ink:       #0a1929;
+  --ink2:      #1e3352;
+  --ink3:      #4d6280;
+  --serif:     'Noto Serif SC', serif;
+  --sans:      'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  /* A3 尺寸 */
+  --w: 1587px;
+  --h: 1123px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #c8d3df;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 28px;
+  min-height: 100vh;
+}
+
+/* 打印 A3 横版 */
+@media print {
+  html, body { background: none; padding: 0; }
+  .poster { box-shadow: none; }
+}
+
+/* ─────────────────────────────────────────────
+   海报主体 (A3 横版 1587×1123px = 420×297mm @ 96dpi)
+──────────────────────────────────────────────*/
+.poster {
+  width: var(--w);
+  height: var(--h);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 1100px 600px at 20% 8%,  rgba(45,120,220,.09), transparent 65%),
+    radial-gradient(ellipse  900px 500px at 80% 95%, rgba(0,184,212,.07),  transparent 65%),
+    linear-gradient(175deg, #f4f8fd 0%, #e9f1fa 100%);
+  box-shadow: 0 24px 72px rgba(8,30,60,.25), 0 4px 12px rgba(8,30,60,.12);
+  flex-shrink: 0;
+}
+
+/* 网格纹理 */
+.poster::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(17,55,120,.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17,55,120,.038) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* ─── HUD 角标 ─── */
+.hud-corner {
+  position: absolute; width: 80px; height: 80px; z-index: 2; pointer-events: none;
+  border: 1.5px solid rgba(37,99,184,.55);
+}
+.hud-corner::after {
+  content: "";
+  position: absolute; width: 6px; height: 6px; background: var(--cyan);
+  border-radius: 50%; box-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0,184,212,.5);
+}
+.hud-corner.tl { top:12px; left:12px; border-right:none; border-bottom:none; }
+.hud-corner.tl::after { top:-3px; left:-3px; }
+.hud-corner.tr { top:12px; right:12px; border-left:none; border-bottom:none; }
+.hud-corner.tr::after { top:-3px; right:-3px; }
+.hud-corner.bl { bottom:12px; left:12px; border-right:none; border-top:none; }
+.hud-corner.bl::after { bottom:-3px; left:-3px; }
+.hud-corner.br { bottom:12px; right:12px; border-left:none; border-top:none; }
+.hud-corner.br::after { bottom:-3px; right:-3px; }
+
+/* ─────────────────────────────────────────────
+   HEADER
+──────────────────────────────────────────────*/
+.header {
+  position: absolute;
+  top: 22px; left: 50px; right: 50px;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+  z-index: 5;
+}
+
+/* 左侧徽标区 */
+.h-badge-wrap { display: flex; align-items: center; gap: 14px; }
+.h-badge {
+  width: 58px; height: 58px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue-d) 0%, var(--cyan) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-weight: 900; font-size: 28px; color: #fff;
+  box-shadow: 0 6px 20px rgba(19,49,104,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  position: relative;
+}
+.h-badge::after {
+  content: ""; position: absolute; inset: -5px;
+  border: 1px solid rgba(0,184,212,.4); border-radius: 16px;
+}
+.h-meta { display: flex; flex-direction: column; gap: 3px; }
+.h-meta-no { font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em; color: var(--ink3); }
+.h-meta-cn { font-family: var(--sans); font-weight: 700; font-size: 12px; color: var(--blue); letter-spacing: .12em; }
+
+/* 中部主标题 */
+.h-center { text-align: center; }
+.h-title {
+  font-family: var(--serif); font-weight: 900; font-size: 48px; letter-spacing: .09em;
+  line-height: 1;
+  background: linear-gradient(180deg, var(--navy) 20%, var(--blue-m) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.h-sub {
+  margin-top: 9px;
+  font-size: 13px; font-weight: 400; letter-spacing: .52em; color: var(--blue);
+}
+.h-sub .sep {
+  display: inline-block;
+  width: 4px; height: 4px; background: var(--cyan); border-radius: 50%;
+  margin: 0 11px 2px; vertical-align: middle;
+}
+
+/* 右侧数据统计 */
+.h-stats { display: flex; align-items: center; gap: 0; }
+.h-stat { text-align: center; padding: 0 16px; }
+.h-stat + .h-stat { border-left: 1px solid var(--line); }
+.h-stat-n { font-family: var(--mono); font-weight: 700; font-size: 26px; color: var(--blue-m); line-height: 1; }
+.h-stat-l { font-size: 10px; color: var(--ink3); margin-top: 4px; letter-spacing: .1em; }
+
+/* ─────────────────────────────────────────────
+   主区域 三列
+──────────────────────────────────────────────*/
+.main {
+  position: absolute;
+  top: 126px; left: 28px; right: 28px; height: 622px;
+  display: grid;
+  grid-template-columns: 316px 1fr 316px;
+  gap: 12px;
+  z-index: 5;
+}
+
+/* 通用面板 */
+.panel {
+  background: rgba(255,255,255,.80);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  backdrop-filter: blur(8px);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(17,55,120,.055);
+}
+.panel-hd {
+  padding: 8px 13px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-hd.d1 { background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 100%); border-bottom: 2px solid var(--cyan); }
+.panel-hd.d2 { background: linear-gradient(90deg, var(--blue-d) 0%, var(--blue-m) 100%); border-bottom: 2px solid var(--blue-b); }
+.panel-hd.d3 { background: linear-gradient(90deg, var(--blue-m) 0%, var(--cyan) 100%); border-bottom: 2px solid var(--cyan2); }
+.pt { font-family: var(--serif); font-weight: 700; font-size: 14px; letter-spacing: .2em; color: #fff; }
+.pt-en { font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: rgba(255,255,255,.65); }
+.panel-bd { padding: 7px; flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+
+/* 赛道卡片 */
+.tc {
+  background: #fff; border: 1px solid var(--line2);
+  border-radius: 5px; padding: 7px 10px; flex: 1;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.tc.a { border-left: 3px solid var(--cyan); }
+.tc.b { border-left: 3px solid var(--blue-b); }
+.tc-n {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--serif); font-weight: 700; font-size: 13px; color: var(--navy); letter-spacing: .03em;
+}
+.tc-tag { font-family: var(--mono); font-size: 8.5px; color: var(--blue-m); background: var(--sky); padding: 1px 5px; border-radius: 2px; letter-spacing: .05em; }
+.tc-c { font-size: 10px; color: var(--ink2); line-height: 1.4; }
+.tc-c b { color: var(--blue); font-weight: 500; margin-right: 3px; }
+.tc-f { font-size: 9.5px; color: var(--ink3); line-height: 1.45; }
+.tc-f b { color: var(--ink2); font-weight: 500; margin-right: 3px; }
+
+/* ─── 左列 ─── */
+.col-l { display: flex; flex-direction: column; gap: 9px; }
+.p-foundation { flex: 2; }
+.p-tech        { flex: 1; }
+
+/* ─── 中列 (地图) ─── */
+.col-m {
+  position: relative;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(17,55,120,.20);
+  box-shadow: 0 4px 16px rgba(17,55,120,.08);
+}
+#gdmap { width: 100%; height: 100%; }
+
+/* 地图上方 UI 叠层 */
+.map-overlay {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 12px 16px 0;
+  z-index: 1000; pointer-events: none;
+}
+.map-title-block { }
+.map-title-cn { font-family: var(--serif); font-weight: 900; font-size: 18px; color: var(--navy); letter-spacing: .1em; text-shadow: 0 1px 4px rgba(255,255,255,.9); }
+.map-title-en { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: .2em; margin-top: 2px; }
+
+.map-legend {
+  background: rgba(255,255,255,.88);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 7px 11px; pointer-events: auto;
+  backdrop-filter: blur(8px);
+  display: flex; gap: 14px; align-items: center;
+}
+.lg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--ink2); }
+.lg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lg-dot.t1 { background: radial-gradient(circle, #fff 20%, var(--cyan) 80%); box-shadow: 0 0 7px var(--cyan); }
+.lg-dot.t2 { background: var(--blue-b); }
+.lg-dot.t3 { background: var(--cyan2); border: 1.5px solid var(--cyan); }
+
+/* 地图底部 */
+.map-btm {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 0 16px 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 1000; pointer-events: none;
+}
+.map-src { font-family: var(--mono); font-size: 8.5px; color: var(--ink3); letter-spacing: .12em; background: rgba(255,255,255,.75); padding: 3px 7px; border-radius: 3px; }
+
+/* ─── 右列 ─── */
+.col-r { display: flex; flex-direction: column; }
+.p-app { flex: 1; }
+.p-app .panel-bd { gap: 4px; }
+.p-app .tc { padding: 5px 9px; gap: 1px; }
+.p-app .tc-n { font-size: 12px; }
+.p-app .tc-c { font-size: 9px; line-height: 1.35; }
+.p-app .tc-f { font-size: 9px; line-height: 1.35; }
+
+/* ─────────────────────────────────────────────
+   底部矩阵
+──────────────────────────────────────────────*/
+.matrix {
+  position: absolute;
+  left: 28px; right: 28px;
+  top: calc(126px + 622px + 12px);  /* = 760px */
+  bottom: 22px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  backdrop-filter: blur(8px);
+  display: flex; flex-direction: column;
+  padding: 10px 14px 10px;
+  z-index: 5;
+  overflow: hidden;
+}
+.mx-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px; margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.mx-title {
+  font-family: var(--serif); font-weight: 900; font-size: 16px; color: var(--navy); letter-spacing: .2em;
+  display: flex; align-items: center; gap: 9px;
+}
+.mx-title::before { content: ""; width: 4px; height: 16px; background: linear-gradient(var(--blue-m), var(--cyan)); border-radius: 2px; }
+.mx-meta { display: flex; gap: 18px; font-family: var(--mono); font-size: 9.5px; color: var(--ink3); letter-spacing: .12em; }
+.mx-meta b { color: var(--blue-m); font-weight: 700; }
+.mx-body { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+
+/* 层级行 */
+.tier-row { display: flex; flex-direction: column; gap: 5px; }
+.tier-lbl {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--serif); font-weight: 700; font-size: 10px;
+  color: var(--blue); letter-spacing: .28em;
+}
+.tier-lbl::before { content: ""; width: 12px; height: 1.5px; background: var(--blue); }
+.tier-lbl::after  { content: ""; flex: 1; height: 1px; background: var(--line2); }
+.tier-lbl .tag { font-family: var(--mono); font-size: 8.5px; font-weight: 400; color: var(--ink3); background: var(--sky); padding: 1px 6px; border-radius: 2px; letter-spacing: .08em; }
+
+/* 城市卡片网格 */
+.cg { display: grid; gap: 5px; }
+.cg.core { grid-template-columns: 1fr 1fr; }
+.cg.hub  { grid-template-columns: repeat(5, 1fr); }
+.cg.spec { grid-template-columns: repeat(7, 1fr); grid-template-rows: 1fr 1fr; }
+
+.cc {
+  border-radius: 4px; padding: 5px 8px;
+  display: flex; flex-direction: column; gap: 2px;
+  position: relative; overflow: hidden;
+}
+/* 双核卡 */
+.cc.t1 {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  border: none; padding: 8px 14px;
+}
+.cc.t1 .cc-name { font-family: var(--serif); font-weight: 900; font-size: 14px; color: #fff; letter-spacing: .06em; }
+.cc.t1 .cc-pos  { font-size: 10px; color: rgba(255,255,255,.8); border-bottom: 1px dashed rgba(255,255,255,.2); padding-bottom: 3px; margin-bottom: 3px; }
+.cc.t1 .cc-pin  { position: absolute; top: 6px; right: 9px; font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,.4); }
+.cc.t1 .cc-firms { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 6px; }
+.cc.t1 .cc-firms span { font-size: 10px; color: rgba(255,255,255,.9); border-left: 2px solid var(--cyan); padding-left: 5px; line-height: 1.5; }
+/* 枢纽卡 */
+.cc.t2 {
+  background: linear-gradient(180deg, #fff 0%, #e8f2fb 100%);
+  border: 1px solid var(--line2); border-left: 3px solid var(--blue-b);
+}
+.cc.t2 .cc-name { font-family: var(--serif); font-weight: 900; font-size: 12.5px; color: var(--blue); letter-spacing: .06em; }
+.cc.t2 .cc-pos  { font-size: 9px; color: var(--ink2); border-bottom: 1px dashed var(--line2); padding-bottom: 2px; margin-bottom: 2px; }
+.cc.t2 .cc-pin  { position: absolute; top: 5px; right: 8px; font-family: var(--mono); font-size: 7.5px; color: var(--ink3); }
+.cc.t2 .cc-firms { font-size: 9.5px; color: var(--ink2); line-height: 1.45; }
+/* 特色卡 */
+.cc.t3 {
+  background: #fff;
+  border: 1px solid var(--line2); border-left: 2px solid var(--cyan2);
+}
+.cc.t3 .cc-name { font-family: var(--serif); font-weight: 700; font-size: 12px; color: var(--navy); letter-spacing: .04em; }
+.cc.t3 .cc-pos  { font-size: 8.5px; color: var(--ink2); border-bottom: 1px dashed var(--line2); padding-bottom: 2px; margin-bottom: 2px; line-height: 1.3; }
+.cc.t3 .cc-pin  { position: absolute; top: 4px; right: 7px; font-family: var(--mono); font-size: 7.5px; color: var(--ink3); }
+.cc.t3 .cc-firms { font-size: 9px; color: var(--ink3); line-height: 1.4; }
+
+/* ─────────────────────────────────────────────
+   Leaflet 地图定制样式
+──────────────────────────────────────────────*/
+.leaflet-tile-pane {
+  filter: saturate(0.45) brightness(1.06) contrast(0.96);
+}
+.leaflet-container { background: #e8f0f8; }
+.leaflet-control-attribution { display: none !important; }
+
+/* 城市标注 divicon */
+.cm { position: relative; white-space: nowrap; cursor: default; }
+
+/* 双核节点 */
+.cm.tier1 { z-index: 800; }
+.cm.tier1 .dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: radial-gradient(circle, #fff 18%, var(--cyan) 55%, var(--blue-m) 100%);
+  border: 2.5px solid #fff;
+  box-shadow: 0 0 0 4px rgba(0,184,212,.35), 0 0 18px rgba(0,184,212,.55);
+  margin: auto;
+}
+.cm.tier1 .pulse {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,184,212,.22), transparent 70%);
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes pulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1); opacity: .8; }
+  50%      { transform: translate(-50%,-50%) scale(1.4); opacity: .3; }
+}
+.cm.tier1 .lbl {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  color: #fff; border-radius: 4px; padding: 3px 8px 3px;
+  margin-top: 4px; text-align: center;
+  box-shadow: 0 2px 8px rgba(10,30,70,.35);
+  border: 1px solid rgba(0,184,212,.45);
+}
+.cm.tier1 .lbl-name { font-family: var(--serif); font-weight: 900; font-size: 14px; letter-spacing: .05em; line-height: 1.2; }
+.cm.tier1 .lbl-pos  { font-family: var(--sans); font-weight: 400; font-size: 9.5px; color: rgba(255,255,255,.82); letter-spacing: .04em; white-space: nowrap; }
+.cm.tier1 .lbl-tags { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 2px; }
+.cm.tier1 .lbl-tags span { font-family: var(--mono); font-size: 8px; background: rgba(0,184,212,.25); color: var(--cyan2); border-radius: 2px; padding: 0 4px; letter-spacing: .05em; }
+
+/* 枢纽节点 */
+.cm.tier2 { z-index: 700; }
+.cm.tier2 .dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle, var(--blue-b) 40%, var(--blue-m) 100%);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2.5px rgba(61,130,224,.45), 0 0 8px rgba(61,130,224,.4);
+  margin: auto;
+}
+.cm.tier2 .lbl {
+  background: rgba(255,255,255,.93);
+  border: 1px solid var(--line);
+  border-radius: 3px; padding: 2px 7px;
+  margin-top: 3px; text-align: center;
+  box-shadow: 0 1px 5px rgba(17,55,120,.15);
+  backdrop-filter: blur(4px);
+}
+.cm.tier2 .lbl-name { font-family: var(--serif); font-weight: 700; font-size: 12px; color: var(--blue); letter-spacing: .04em; line-height: 1.3; }
+.cm.tier2 .lbl-pos  { font-family: var(--sans); font-size: 8.5px; color: var(--ink2); white-space: nowrap; }
+
+/* 特色节点 */
+.cm.tier3 { z-index: 600; }
+.cm.tier3 .dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--cyan2);
+  border: 1.5px solid var(--blue);
+  box-shadow: 0 0 5px rgba(0,184,212,.3);
+  margin: auto;
+}
+.cm.tier3 .lbl {
+  background: rgba(255,255,255,.88);
+  border: 1px solid var(--line2);
+  border-radius: 3px; padding: 2px 6px;
+  margin-top: 2px; text-align: center;
+  backdrop-filter: blur(4px);
+}
+.cm.tier3 .lbl-name { font-family: var(--serif); font-weight: 700; font-size: 11px; color: var(--navy); letter-spacing: .03em; line-height: 1.3; }
+.cm.tier3 .lbl-pos  { font-family: var(--sans); font-size: 8px; color: var(--ink3); white-space: nowrap; }
+
+/* 连线样式通过 Leaflet polyline 实现 */
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- HUD 角标 -->
+  <div class="hud-corner tl"></div>
+  <div class="hud-corner tr"></div>
+  <div class="hud-corner bl"></div>
+  <div class="hud-corner br"></div>
+
+  <!-- ══════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════ -->
+  <header class="header">
+    <!-- 左侧 -->
+    <div class="h-badge-wrap">
+      <div class="h-badge">粤</div>
+      <div class="h-meta">
+        <div class="h-meta-no">REPORT · GD-AI-2026-01</div>
+        <div class="h-meta-cn">广东省人工智能产业研究图谱</div>
+        <div class="h-meta-no">INDUSTRY MAPPING · SPATIAL DISTRIBUTION</div>
+      </div>
+    </div>
+
+    <!-- 中部主标题 -->
+    <div class="h-center">
+      <h1 class="h-title">广东省人工智能产业图</h1>
+      <div class="h-sub">
+        双核引领<span class="sep"></span>多极协同<span class="sep"></span>赛道集聚<span class="sep"></span>全域赋能
+      </div>
+    </div>
+
+    <!-- 右侧统计 -->
+    <div class="h-stats">
+      <div class="h-stat">
+        <div class="h-stat-n">21</div>
+        <div class="h-stat-l">地 级 市</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-n">14</div>
+        <div class="h-stat-l">重点赛道</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-n">3</div>
+        <div class="h-stat-l">产业层级</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       主区域 三列
+  ══════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- ─── 左列：基础层 + 技术层 ─── -->
+    <div class="col-l">
+
+      <!-- 基础层 -->
+      <div class="panel p-foundation">
+        <div class="panel-hd d1"><span class="pt">基础层重点赛道</span><span class="pt-en">L1 · INFRASTRUCTURE</span></div>
+        <div class="panel-bd">
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">01</span>AI芯片 / AIoT芯片</div>
+            <div class="tc-c"><b>重点城市</b>深圳、珠海</div>
+            <div class="tc-f"><b>代表企业</b>华为、云天励飞、全志科技、炬芯科技</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">02</span>算力基础设施</div>
+            <div class="tc-c"><b>重点城市</b>韶关、湛江、阳江</div>
+            <div class="tc-f"><b>代表企业</b>中电鹰硕、华韶数智科技、东阳光、湛江人工智能发展、中科产业</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">03</span>数据服务 / 合成数据</div>
+            <div class="tc-c"><b>重点城市</b>清远、梅州</div>
+            <div class="tc-f"><b>代表企业</b>中穆海程、星舆数据</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">04</span>AI服务器 / 电子配套</div>
+            <div class="tc-c"><b>重点城市</b>惠州、河源</div>
+            <div class="tc-f"><b>代表企业</b>胜宏科技、光弘科技、异能者（河源）</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 技术层 -->
+      <div class="panel p-tech">
+        <div class="panel-hd d2"><span class="pt">技术层重点赛道</span><span class="pt-en">L2 · TECHNOLOGY</span></div>
+        <div class="panel-bd">
+          <div class="tc b">
+            <div class="tc-n"><span class="tc-tag">05</span>AI大模型</div>
+            <div class="tc-c"><b>重点城市</b>深圳、广州</div>
+            <div class="tc-f"><b>代表企业</b>鹏城实验室、腾讯、元象科技、云从科技</div>
+          </div>
+          <div class="tc b">
+            <div class="tc-n"><span class="tc-tag">06</span>AI视觉算法</div>
+            <div class="tc-c"><b>重点城市</b>深圳、广州</div>
+            <div class="tc-f"><b>代表企业</b>思谋科技、云天励飞、元戎启行、商汤科技</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 中列：Leaflet 真实地图 ─── -->
+    <div class="col-m">
+      <div id="gdmap"></div>
+
+      <!-- 地图叠层 UI -->
+      <div class="map-overlay">
+        <div class="map-title-block">
+          <div class="map-title-cn">广东省人工智能产业空间格局</div>
+          <div class="map-title-en">SPATIAL PATTERN · TWIN-CORE · MULTI-HUB · CLUSTER</div>
+        </div>
+        <div class="map-legend">
+          <div class="lg"><span class="lg-dot t1"></span>双核引领</div>
+          <div class="lg"><span class="lg-dot t2"></span>枢纽协同</div>
+          <div class="lg"><span class="lg-dot t3"></span>特色组团</div>
+        </div>
+      </div>
+
+      <div class="map-btm">
+        <span class="map-src">© CartoDB · OpenStreetMap · GD-AI-2026</span>
+        <span class="map-src">21 CITIES · 14 TRACKS · 3 LAYERS</span>
+      </div>
+    </div>
+
+    <!-- ─── 右列：应用层 8 卡片 ─── -->
+    <div class="col-r">
+      <div class="panel p-app">
+        <div class="panel-hd d3"><span class="pt">应用层重点赛道</span><span class="pt-en">L3 · APPLICATION</span></div>
+        <div class="panel-bd">
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">07</span>AI工业机器人 / AI+制造</div>
+            <div class="tc-c"><b>城市</b>佛山·东莞·肇庆·江门·清远·揭阳·湛江</div>
+            <div class="tc-f"><b>企业</b>拓斯达、李群自动化、华数机器人、华沿机器人、天太机器人、巨轮智能、宝钢湛江钢铁</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">08</span>自动驾驶 / 智能座舱</div>
+            <div class="tc-c"><b>城市</b>广州·深圳·惠州</div>
+            <div class="tc-f"><b>企业</b>小鹏汽车、广汽集团、文远知行、小马智行、元戎启行、德赛西威、华阳集团</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">09</span>AI终端</div>
+            <div class="tc-c"><b>城市</b>深圳·东莞·珠海·中山·河源</div>
+            <div class="tc-f"><b>企业</b>荣耀、影目科技、OPPO、vivo、小天才、星纪魅族、读书郎、乐心医疗</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">10</span>AI+医疗健康</div>
+            <div class="tc-c"><b>城市</b>深圳·广州·中山·潮州·河源·揭阳</div>
+            <div class="tc-f"><b>企业</b>金域医学、乐心医疗、凯普生物、德澳智慧医疗、中科明我</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">11</span>AI+文旅</div>
+            <div class="tc-c"><b>城市</b>广州·汕尾·清远</div>
+            <div class="tc-f"><b>企业</b>趣丸科技、数说故事、汕尾虎鲸、互动电子</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">12</span>AI+玩具</div>
+            <div class="tc-c"><b>城市</b>汕头</div>
+            <div class="tc-f"><b>企业</b>奥飞娱乐、群宇互动、向远同行、实丰文化</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">13</span>AI+教育</div>
+            <div class="tc-c"><b>城市</b>中山·汕尾·阳江·云浮·河源</div>
+            <div class="tc-f"><b>企业</b>读书郎、维皓教育、阳江小极客编程、中科华微、勇艺达科技</div>
+          </div>
+          <div class="tc a">
+            <div class="tc-n"><span class="tc-tag">14</span>AI+农业</div>
+            <div class="tc-c"><b>城市</b>云浮·河源·湛江·梅州</div>
+            <div class="tc-f"><b>企业</b>温氏股份、万绿智慧农业、国联水产、市晟邦科技、成至智能</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ══════════════════════════════════════
+       底部 21 地市代表企业矩阵
+  ══════════════════════════════════════ -->
+  <div class="matrix">
+    <div class="mx-hd">
+      <div class="mx-title">21 地市代表企业矩阵</div>
+      <div class="mx-meta">
+        <span><b>02</b> 双核引领型</span>
+        <span><b>05</b> 枢纽协同型</span>
+        <span><b>14</b> 特色应用型</span>
+        <span>REPRESENTATIVE ENTERPRISES MATRIX · GD 21 PREFECTURES</span>
+      </div>
+    </div>
+
+    <div class="mx-body">
+
+      <!-- 核心引领 -->
+      <div class="tier-row">
+        <div class="tier-lbl">CORE · 核心引领型 <span class="tag">DUAL-CORE ENGINE</span></div>
+        <div class="cg core">
+          <div class="cc t1">
+            <div class="cc-pin">01 / SZ</div>
+            <div class="cc-name">深圳 · SHENZHEN</div>
+            <div class="cc-pos">全栈AI核心引擎 · AI芯片 / 大模型 / 具身智能 / AI终端</div>
+            <div class="cc-firms">
+              <span>华为</span><span>鹏城实验室</span><span>云天励飞</span><span>元象科技</span><span>腾讯</span>
+              <span>晶泰科技</span><span>优必选</span><span>元戎启行</span><span>影目科技</span><span>荣耀</span>
+            </div>
+          </div>
+          <div class="cc t1">
+            <div class="cc-pin">02 / GZ</div>
+            <div class="cc-name">广州 · GUANGZHOU</div>
+            <div class="cc-pos">模型应用创新高地 · 行业大模型 / 自动驾驶 / AI+文娱 / AI+医疗健康</div>
+            <div class="cc-firms">
+              <span>云从科技</span><span>佳都科技</span><span>趣丸科技</span><span>三七互娱</span><span>小鹏汽车</span>
+              <span>数说故事</span><span>广汽集团</span><span>文远知行</span><span>小马智行</span><span>金域医学</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 枢纽协同 -->
+      <div class="tier-row">
+        <div class="tier-lbl">HUB · 枢纽协同型 <span class="tag">5 HUB CITIES</span></div>
+        <div class="cg hub">
+          <div class="cc t2">
+            <div class="cc-pin">03</div>
+            <div class="cc-name">佛山</div>
+            <div class="cc-pos">工业AI与机器人重镇</div>
+            <div class="cc-firms">美云智数、华数机器人、美的集团、华沿机器人、天太机器人</div>
+          </div>
+          <div class="cc t2">
+            <div class="cc-pin">04</div>
+            <div class="cc-name">东莞</div>
+            <div class="cc-pos">智能终端与机器人制造高地</div>
+            <div class="cc-firms">OPPO、vivo、小天才、拓斯达、李群自动化</div>
+          </div>
+          <div class="cc t2">
+            <div class="cc-pin">05</div>
+            <div class="cc-name">珠海</div>
+            <div class="cc-pos">芯片与智能终端协同高地</div>
+            <div class="cc-firms">全志科技、炬芯科技、金山软件、星纪魅族、东信时代</div>
+          </div>
+          <div class="cc t2">
+            <div class="cc-pin">06</div>
+            <div class="cc-name">惠州</div>
+            <div class="cc-pos">智能汽车电子与算力配套高地</div>
+            <div class="cc-firms">胜宏科技、光弘科技、德赛西威、华阳集团、亿纬锂能</div>
+          </div>
+          <div class="cc t2">
+            <div class="cc-pin">07</div>
+            <div class="cc-name">中山</div>
+            <div class="cc-pos">特色智能终端应用高地</div>
+            <div class="cc-firms">神舞科技、读书郎、木林森、乐心医疗、欧普照明</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 特色应用 -->
+      <div class="tier-row">
+        <div class="tier-lbl">SPECIALTY · 特色应用型 <span class="tag">14 CITIES</span></div>
+        <div class="cg spec">
+          <div class="cc t3"><div class="cc-pin">08</div><div class="cc-name">江门</div><div class="cc-pos">机器人与智能制造</div><div class="cc-firms">领益智造、中食安泓、德森智能装备、同川科技、蓝点触控</div></div>
+          <div class="cc t3"><div class="cc-pin">09</div><div class="cc-name">肇庆</div><div class="cc-pos">工业机器人产业集聚</div><div class="cc-firms">金晟新能源、无限聚合、中科智能装备、凌飞航空、金马领科</div></div>
+          <div class="cc t3"><div class="cc-pin">10</div><div class="cc-name">韶关</div><div class="cc-pos">算力基础设施战略支点</div><div class="cc-firms">中电鹰硕、华韶数智、信拓网络、东阳光、宝武韶钢</div></div>
+          <div class="cc t3"><div class="cc-pin">11</div><div class="cc-name">清远</div><div class="cc-pos">轻工智造AI应用高地</div><div class="cc-firms">中穆海程、互动电子、光合丰航、欣强电子、中昇华控</div></div>
+          <div class="cc t3"><div class="cc-pin">12</div><div class="cc-name">云浮</div><div class="cc-pos">智慧养殖与现代农业</div><div class="cc-firms">盈海科技、中科华微、燧桐链科、物联网研究院、温氏股份</div></div>
+          <div class="cc t3"><div class="cc-pin">13</div><div class="cc-name">梅州</div><div class="cc-pos">工业无人机特色发展</div><div class="cc-firms">卓启科技、市晟邦科技、成至智能、中芯云联、星舆数据</div></div>
+          <div class="cc t3"><div class="cc-pin">14</div><div class="cc-name">河源</div><div class="cc-pos">AI服务器与智能终端</div><div class="cc-firms">异能者（河源）、勇艺达科技、德澳智慧医疗、万绿智慧农业、美晨通讯</div></div>
+          <div class="cc t3"><div class="cc-pin">15</div><div class="cc-name">汕头</div><div class="cc-pos">AI玩具特色应用高地</div><div class="cc-firms">汕头超声电子、奥飞娱乐、群宇互动、向远同行、实丰文化</div></div>
+          <div class="cc t3"><div class="cc-pin">16</div><div class="cc-name">潮州</div><div class="cc-pos">智能营销与SaaS服务</div><div class="cc-firms">商道智能、灏学科技、微派科技、壹信智能、凯普生物</div></div>
+          <div class="cc t3"><div class="cc-pin">17</div><div class="cc-name">揭阳</div><div class="cc-pos">智能制造特色应用</div><div class="cc-firms">巨轮智能、钜欧云控、硅基生命（广东）、成发制衣、中科明我</div></div>
+          <div class="cc t3"><div class="cc-pin">18</div><div class="cc-name">汕尾</div><div class="cc-pos">智慧政务特色应用</div><div class="cc-firms">市幻空间、普云技术、汕尾虎鲸、维皓教育、汕尾秉政软件</div></div>
+          <div class="cc t3"><div class="cc-pin">19</div><div class="cc-name">湛江</div><div class="cc-pos">重化工业智能化应用</div><div class="cc-firms">派宝机器人、湛江AI发展、宝钢湛江、中科炼化、国联水产</div></div>
+          <div class="cc t3"><div class="cc-pin">20</div><div class="cc-name">茂名</div><div class="cc-pos">新材料与化工智能化</div><div class="cc-firms">长盈科技、东华能源、百越数据、茂名石化、茂名发展集团</div></div>
+          <div class="cc t3"><div class="cc-pin">21</div><div class="cc-name">阳江</div><div class="cc-pos">钢铁智能化应用高地</div><div class="cc-firms">鼎兴达、鸣康仪云、中科产业、阳春新钢铁、阳江小极客编程</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /matrix -->
+
+</div><!-- /poster -->
+
+<!-- ══════════════════════════════════════
+     Leaflet JS
+══════════════════════════════════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ────────────────────────────────────────
+//  初始化地图
+// ────────────────────────────────────────
+const map = L.map('gdmap', {
+  zoomControl:       false,
+  attributionControl:false,
+  scrollWheelZoom:   false,
+  dragging:          false,
+  doubleClickZoom:   false,
+  touchZoom:         false,
+  keyboard:          false,
+  boxZoom:           false,
+  preferCanvas:      true
+});
+
+// CartoDB Positron 浅色底图 (无需 API key)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  subdomains: 'abcd',
+  maxZoom: 10,
+  tileSize: 256
+}).addTo(map);
+
+// 广东省范围 [SW, NE]
+const gdBounds = L.latLngBounds(
+  [19.0, 108.3],   // 西南：雷州半岛以南
+  [25.5, 117.8]    // 东北：梅州/潮州以东
+);
+map.fitBounds(gdBounds, { padding: [10, 10] });
+
+// ────────────────────────────────────────
+//  广东省边界高亮（简化多边形）
+// ────────────────────────────────────────
+const gdPolygon = L.polygon([
+  // 粗略广东省边界，顺时针
+  [25.50,110.20],[25.35,111.00],[25.12,112.50],[25.00,113.30],[24.90,114.30],
+  [24.80,114.80],[24.60,115.40],[24.20,115.80],[24.05,116.10],[23.95,116.50],
+  [23.70,116.80],[23.35,117.10],[23.05,116.70],[22.75,115.55],[22.50,114.50],
+  [22.35,114.25],[22.18,114.00],[22.08,113.80],[22.20,113.50],[21.90,112.80],
+  [21.60,112.00],[21.10,111.30],[20.85,110.65],[20.70,110.20],[20.50,110.00],
+  [20.25,110.15],[20.15,110.35],[20.40,110.65],[20.70,110.90],[21.00,110.70],
+  [21.40,110.85],[21.90,111.10],[22.30,111.60],[22.65,112.00],[22.90,111.80],
+  [23.30,111.50],[23.55,110.80],[24.00,110.80],[24.40,110.70],[25.00,110.20],
+  [25.50,110.20]
+], {
+  color:     '#1b4287',
+  weight:    1.8,
+  opacity:   0.75,
+  fillColor: '#2563b8',
+  fillOpacity: 0.06,
+  dashArray: null
+}).addTo(map);
+
+// ────────────────────────────────────────
+//  城市数据
+// ────────────────────────────────────────
+const cities = [
+  // ── 双核 ──
+  { name:'广州', en:'GUANGZHOU', lat:23.129, lng:113.264, tier:1,
+    pos:'模型应用创新高地', tags:['行业大模型','自动驾驶','AI+文娱','AI+医疗'] },
+  { name:'深圳', en:'SHENZHEN',  lat:22.543, lng:114.058, tier:1,
+    pos:'全栈AI核心引擎',   tags:['AI芯片','大模型','具身智能','AI终端'] },
+  // ── 枢纽 ──
+  { name:'佛山', lat:23.022, lng:113.121, tier:2, pos:'工业AI与机器人重镇' },
+  { name:'东莞', lat:23.021, lng:113.752, tier:2, pos:'智能终端与机器人制造高地' },
+  { name:'珠海', lat:22.271, lng:113.577, tier:2, pos:'芯片与智能终端协同高地' },
+  { name:'惠州', lat:23.112, lng:114.415, tier:2, pos:'智能汽车电子与算力配套高地' },
+  { name:'中山', lat:22.516, lng:113.393, tier:2, pos:'特色智能终端应用高地' },
+  // ── 特色 ──
+  { name:'江门', lat:22.579, lng:113.082, tier:3, pos:'机器人与智能制造' },
+  { name:'肇庆', lat:23.047, lng:112.465, tier:3, pos:'工业机器人产业集聚' },
+  { name:'韶关', lat:24.810, lng:113.594, tier:3, pos:'算力基础设施战略支点' },
+  { name:'清远', lat:23.684, lng:113.057, tier:3, pos:'轻工智造AI应用' },
+  { name:'云浮', lat:22.915, lng:112.044, tier:3, pos:'AI养殖与现代农业' },
+  { name:'梅州', lat:24.289, lng:116.123, tier:3, pos:'工业无人机特色发展' },
+  { name:'河源', lat:23.743, lng:114.697, tier:3, pos:'AI服务器与智能终端' },
+  { name:'汕头', lat:23.354, lng:116.682, tier:3, pos:'AI玩具特色应用' },
+  { name:'潮州', lat:23.662, lng:116.622, tier:3, pos:'AI营销与SaaS服务' },
+  { name:'揭阳', lat:23.549, lng:116.373, tier:3, pos:'AI制造特色应用' },
+  { name:'汕尾', lat:22.779, lng:115.375, tier:3, pos:'AI政务特色应用' },
+  { name:'湛江', lat:21.271, lng:110.359, tier:3, pos:'重化工业智能化应用' },
+  { name:'茂名', lat:21.663, lng:110.925, tier:3, pos:'新材料与化工智能化' },
+  { name:'阳江', lat:21.857, lng:111.982, tier:3, pos:'AI钢铁应用高地' }
+];
+
+// ────────────────────────────────────────
+//  双核连线
+// ────────────────────────────────────────
+const gz = cities.find(c => c.name === '广州');
+const sz = cities.find(c => c.name === '深圳');
+
+// 主连线（光晕+实线）
+L.polyline([[gz.lat, gz.lng],[sz.lat, sz.lng]], {
+  color: '#00b8d4', weight: 5, opacity: 0.20
+}).addTo(map);
+L.polyline([[gz.lat, gz.lng],[sz.lat, sz.lng]], {
+  color: '#00b8d4', weight: 2.5, opacity: 0.90,
+  dashArray: null
+}).addTo(map);
+
+// 枢纽辐射连线
+const hubs = cities.filter(c => c.tier === 2);
+const coreCoords = { '广州':[gz.lat,gz.lng], '深圳':[sz.lat,sz.lng] };
+const hubLines = {
+  '佛山':  '广州', '东莞':  '深圳', '珠海':  '深圳',
+  '惠州':  '深圳', '中山':  '广州'
+};
+hubs.forEach(h => {
+  const from = coreCoords[hubLines[h.name]];
+  L.polyline([from, [h.lat, h.lng]], {
+    color: '#3d82e0', weight: 1.4, opacity: 0.65, dashArray: '4,3'
+  }).addTo(map);
+});
+
+// ────────────────────────────────────────
+//  城市标注 Marker
+// ────────────────────────────────────────
+cities.forEach(city => {
+  let html = '';
+  const w1 = city.tier === 1 ? 150 : city.tier === 2 ? 120 : 105;
+  const dotW = city.tier === 1 ? 22 : city.tier === 2 ? 14 : 9;
+  const anchor = [w1 / 2, dotW / 2 + 28];
+
+  if (city.tier === 1) {
+    const tagsHtml = (city.tags||[]).map(t => `<span>${t}</span>`).join('');
+    html = `
+      <div class="cm tier1" style="width:${w1}px">
+        <div class="pulse"></div>
+        <div class="dot"></div>
+        <div class="lbl">
+          <div class="lbl-name">${city.name}</div>
+          <div class="lbl-pos">${city.pos}</div>
+          <div class="lbl-tags">${tagsHtml}</div>
+        </div>
+      </div>`;
+  } else if (city.tier === 2) {
+    html = `
+      <div class="cm tier2" style="width:${w1}px">
+        <div class="dot"></div>
+        <div class="lbl">
+          <div class="lbl-name">${city.name}</div>
+          <div class="lbl-pos">${city.pos}</div>
+        </div>
+      </div>`;
+  } else {
+    html = `
+      <div class="cm tier3" style="width:${w1}px">
+        <div class="dot"></div>
+        <div class="lbl">
+          <div class="lbl-name">${city.name}</div>
+          <div class="lbl-pos">${city.pos}</div>
+        </div>
+      </div>`;
+  }
+
+  const icon = L.divIcon({
+    html,
+    className: '',
+    iconSize:   [w1, 80],
+    iconAnchor: anchor
+  });
+
+  L.marker([city.lat, city.lng], { icon, zIndexOffset: city.tier === 1 ? 1000 : city.tier === 2 ? 500 : 0 }).addTo(map);
+});
+
+// ────────────────────────────────────────
+//  等地图 tile 加载后刷新尺寸
+// ────────────────────────────────────────
+setTimeout(() => {
+  map.invalidateSize();
+  map.fitBounds(gdBounds, { padding: [14, 14] });
+}, 300);
+</script>
+</body>
+</html>
