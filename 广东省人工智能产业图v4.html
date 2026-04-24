@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1800">
+<title>广东省人工智能产业地图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#08213C;--navy2:#0D2B4D;--blue-deep:#143C78;--blue:#1E56A4;
+  --blue-bright:#3275D0;--cyan:#00B4D8;--cyan-glow:#00D4F5;
+  --ice:#D4E8F6;--sky:#EBF3FA;--bg:#F2F6FB;--bg2:#FAFCFF;
+  --line:rgba(18,50,110,.14);--line2:rgba(18,50,110,.07);
+  --ink:#091626;--ink2:#1F3550;--ink3:#4A6585;--ink4:#7A96B0;
+  --serif:"Noto Serif SC",serif;--sans:"Noto Sans SC","PingFang SC",sans-serif;
+  --mono:"JetBrains Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#D8E2EE;font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;align-items:flex-start;padding:24px;}
+
+/* ============ 海报画布 1800px 宽 ============ */
+.poster{
+  width:1800px;flex-shrink:0;
+  background:linear-gradient(170deg,#F6F9FD 0%,#EDF3FA 40%,#E8F1F8 100%);
+  position:relative;overflow:hidden;
+  box-shadow:0 24px 80px rgba(8,33,60,.22);
+}
+.poster::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(30,86,164,.032) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(30,86,164,.032) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.hud{position:absolute;pointer-events:none;}
+.hud-tl{top:16px;left:16px;}
+.hud-tr{top:16px;right:16px;}
+.hud-bl{bottom:16px;left:16px;}
+.hud-br{bottom:16px;right:16px;}
+.hud svg{display:block;}
+
+/* ============ 顶部标题 ============ */
+.header{
+  padding:24px 32px 22px;
+  border-bottom:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,rgba(255,255,255,.9) 0%,rgba(242,246,251,0) 100%);
+  position:relative;z-index:2;
+}
+.h-badge{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.h-icon{
+  width:60px;height:60px;background:linear-gradient(135deg,var(--blue-deep),var(--cyan));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-weight:900;font-size:28px;color:#fff;
+  box-shadow:0 6px 20px rgba(20,60,120,.3),inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;
+}
+.h-icon::after{content:"";position:absolute;inset:-5px;border:1px solid rgba(0,180,216,.35);border-radius:16px;}
+.h-id{display:flex;flex-direction:column;gap:4px;}
+.h-id-num{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--ink3);}
+.h-id-tag{font-family:var(--sans);font-weight:500;font-size:16px;color:var(--blue);letter-spacing:.10em;}
+
+.h-center{text-align:center;flex:1;padding:0 16px;overflow:hidden;}
+.h-title{
+  font-family:var(--serif);font-weight:900;font-size:56px;letter-spacing:.06em;
+  line-height:1;
+  color:var(--navy);
+}
+.h-sub{
+  margin-top:10px;font-family:var(--sans);font-size:20px;letter-spacing:.32em;
+  color:var(--blue);font-weight:400;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.h-sub-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;display:inline-block;}
+
+.h-stats{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex-shrink:0;}
+.h-stat{padding:12px 18px;min-width:90px;display:flex;flex-direction:column;align-items:center;
+  border-right:1px solid var(--line);background:rgba(255,255,255,.6);}
+.h-stat:last-child{border-right:none;}
+.h-stat-n{font-family:var(--mono);font-weight:700;font-size:36px;color:var(--blue);line-height:1;white-space:nowrap;}
+.h-stat-l{font-family:var(--sans);font-size:14px;color:var(--ink3);margin-top:6px;letter-spacing:.08em;}
+
+/* ============ 主区域：高度=760px (确保地图1062x726完整) ============ */
+.main{
+  display:flex;gap:0;padding:14px 22px;
+  height:768px;
+  overflow:hidden;
+}
+.col-sep{width:12px;flex-shrink:0;}
+.col-side{width:340px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;
+  overflow:hidden;position:relative;z-index:1;}
+
+/* Panel容器 */
+.panel{
+  background:rgba(255,255,255,.78);
+  border:1px solid var(--line);border-radius:7px;
+  overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 2px 12px rgba(20,60,120,.04);
+}
+.panel-hd{
+  padding:11px 14px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;border-bottom:2px solid var(--cyan);overflow:hidden;
+}
+.panel-hd.l1{background:linear-gradient(90deg,var(--navy) 0%,var(--blue-deep) 100%);}
+.panel-hd.l2{background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 100%);}
+.panel-hd.l3{background:linear-gradient(90deg,var(--blue) 0%,var(--cyan) 100%);}
+.panel-hd-t{font-family:var(--serif);font-weight:700;font-size:18px;color:#fff;letter-spacing:.10em;flex-shrink:0;white-space:nowrap;}
+.panel-hd-n{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.06em;
+  white-space:nowrap;flex-shrink:0;text-overflow:ellipsis;overflow:hidden;}
+.panel-bd{padding:8px;display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;}
+
+/* 赛道卡片 */
+.tc{
+  background:#fff;border:1px solid var(--line2);border-radius:5px;
+  border-left:3px solid var(--cyan);padding:9px 12px;
+  flex:1;min-height:0;
+}
+.tc.deep{border-left-color:var(--blue-bright);}
+.tc-name{
+  font-family:var(--serif);font-weight:700;font-size:18px;color:var(--navy);
+  letter-spacing:.02em;display:flex;align-items:center;gap:6px;margin-bottom:4px;
+}
+.tc-num{
+  font-family:var(--mono);font-size:12px;background:var(--sky);color:var(--blue);
+  padding:2px 6px;border-radius:2px;letter-spacing:.04em;font-weight:500;
+}
+.tc-row{font-size:13.5px;color:var(--ink2);line-height:1.45;margin-bottom:2px;}
+.tc-row b{color:var(--blue-deep);font-weight:600;margin-right:3px;}
+.tc-row.small{font-size:12.5px;color:var(--ink3);}
+
+.col-right .tc{padding:8px 11px;}
+.col-right .tc-name{font-size:16px;margin-bottom:2px;}
+.col-right .tc-row{font-size:12.5px;line-height:1.4;}
+.col-right .tc-row.small{font-size:12px;}
+
+/* ============ 中部地图：高度=760px(等于main高度-padding) ============ */
+.col-map{
+  flex:1;height:740px;position:relative;z-index:2;
+  background:transparent;
+  border:none;
+  overflow:visible;
+}
+.map-img{
+  position:absolute;top:50%;left:50%;
+  width:100%;height:auto;
+  transform:translate(-50%,-50%) scale(0.8);
+  transform-origin:center center;
+  display:block;
+}
+.map-tint{display:none;}
+.map-svg{position:absolute;top:50%;left:50%;width:100%;pointer-events:none;z-index:2;overflow:hidden;transform:translate(-50%,-50%) scale(0.8);transform-origin:center center;}
+.map-top{position:absolute;top:12px;left:16px;right:16px;
+  display:flex;justify-content:space-between;align-items:flex-start;z-index:10;pointer-events:none;}
+.map-ttl{font-family:var(--serif);font-weight:900;font-size:26px;color:#fff;letter-spacing:.08em;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--blue-deep) 100%);padding:10px 22px 9px;border-radius:6px;
+  box-shadow:0 4px 14px rgba(8,33,60,.25);}
+.map-ttl small{display:block;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5);
+  letter-spacing:.12em;font-weight:400;margin-top:3px;}
+.map-lgd{display:flex;gap:10px;background:rgba(255,255,255,.92);
+  padding:7px 12px;border:1px solid rgba(30,86,164,.2);border-radius:4px;
+  box-shadow:0 2px 8px rgba(8,33,60,.08);}
+.lg{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--ink2);}
+.lg-c{width:10px;height:10px;border-radius:50%;}
+.lg-c.c1{background:var(--cyan-glow);box-shadow:0 0 6px var(--cyan);}
+.lg-c.c2{background:var(--blue-bright);}
+.lg-c.c3{background:var(--cyan);opacity:.6;}
+.map-footer{position:absolute;bottom:10px;left:16px;right:16px;
+  display:flex;justify-content:space-between;z-index:10;
+  font-family:var(--mono);font-size:12px;color:var(--ink3);letter-spacing:.10em;}
+.mf-tag{background:rgba(255,255,255,.9);padding:5px 9px;border:1px solid rgba(30,86,164,.15);border-radius:3px;color:var(--ink2);}
+
+/* ============ 底部矩阵 ============ */
+.matrix{
+  margin:0 22px 20px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);border-radius:7px;
+  padding:14px 18px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.mx-hd{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:11px;border-bottom:1.5px solid var(--line);flex-shrink:0;}
+.mx-ttl{font-family:var(--serif);font-weight:900;font-size:24px;color:var(--navy);
+  letter-spacing:.15em;display:flex;align-items:center;gap:10px;}
+.mx-ttl::before{content:"";width:4px;height:22px;background:linear-gradient(var(--blue),var(--cyan));border-radius:2px;}
+.mx-meta{font-family:var(--mono);font-size:13px;color:var(--ink3);display:flex;gap:18px;}
+.mx-meta span b{color:var(--blue);font-weight:700;}
+
+.tier-lbl{display:flex;align-items:center;gap:8px;
+  font-family:var(--serif);font-weight:700;font-size:15px;color:var(--blue-deep);
+  letter-spacing:.18em;flex-shrink:0;}
+.tier-lbl::before{content:"";width:14px;height:2px;background:var(--blue);}
+.tier-lbl::after{content:"";flex:1;height:1px;background:var(--line2);}
+.tier-tag{font-family:var(--mono);font-size:12px;color:var(--ink4);font-weight:400;letter-spacing:.06em;}
+
+.city-row{display:flex;gap:7px;flex-shrink:0;}
+
+/* 核心双城 */
+.cc-core{
+  flex:1;background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
+  border-radius:5px;padding:11px 16px;position:relative;overflow:hidden;
+}
+.cc-core::after{
+  content:"";position:absolute;top:-40px;right:-20px;
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,245,.18),transparent 70%);
+}
+.cc-core-h{display:flex;align-items:baseline;gap:10px;margin-bottom:5px;}
+.cc-core-name{font-family:var(--serif);font-weight:900;font-size:24px;color:#fff;letter-spacing:.05em;}
+.cc-core-id{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.10em;}
+.cc-core-pos{font-family:var(--sans);font-size:14px;color:rgba(255,255,255,.88);margin-bottom:7px;line-height:1.4;}
+.cc-core-firms{display:flex;flex-wrap:wrap;gap:4px 12px;}
+.cc-core-firm{font-size:13.5px;color:rgba(255,255,255,.95);
+  padding-left:7px;border-left:2px solid var(--cyan);line-height:1.5;white-space:nowrap;}
+
+/* 枢纽卡片 */
+.cc-hub{
+  flex:1;background:linear-gradient(180deg,#fff 0%,#EBF3FA 100%);
+  border:1px solid var(--line);border-left:3px solid var(--blue-bright);
+  border-radius:5px;padding:9px 13px;
+}
+.cc-hub-name{font-family:var(--serif);font-weight:900;font-size:18px;color:var(--blue-deep);letter-spacing:.04em;}
+.cc-hub-pos{font-family:var(--sans);font-size:12.5px;color:var(--ink2);line-height:1.4;margin:4px 0;}
+.cc-hub-firms{font-family:var(--sans);font-size:12.5px;color:var(--ink3);line-height:1.5;}
+
+/* 特色城市卡片 */
+.cc-spec{
+  flex:1;background:#fff;border:1px solid var(--line2);
+  border-left:2.5px solid rgba(0,180,216,.5);
+  border-radius:5px;padding:8px 11px;overflow:hidden;
+}
+.cc-spec-name{font-family:var(--serif);font-weight:900;font-size:16px;color:var(--navy);
+  letter-spacing:.03em;margin-bottom:3px;}
+.cc-spec-pos{font-family:var(--sans);font-size:11.5px;color:var(--ink3);line-height:1.35;
+  margin-bottom:4px;border-bottom:1px dashed var(--line2);padding-bottom:4px;}
+.cc-spec-firms{font-family:var(--sans);font-size:11.5px;color:var(--ink2);line-height:1.5;}
+
+/* ============ QR badge ============ */
+.qr-badge{position:absolute;bottom:36px;right:14px;z-index:11;
+  background:rgba(255,255,255,.95);padding:6px;
+  border:1px solid rgba(30,86,164,.22);border-radius:6px;
+  box-shadow:0 4px 14px rgba(8,33,60,.16);
+  display:flex;flex-direction:column;align-items:center;gap:4px;width:128px;}
+.qr-badge-img{width:116px;height:auto;display:block;border-radius:3px;}
+.qr-badge-cap{font-family:var(--sans);font-weight:500;font-size:11px;color:var(--blue-deep);
+  letter-spacing:.04em;text-align:center;line-height:1.2;padding:2px 0 3px;}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- HUD角标装饰 -->
+<div class="hud hud-tl"><svg width="70" height="70"><path d="M0 70 L0 0 L70 0" fill="none" stroke="#1E56A4" stroke-width="1.5" opacity=".7"/><circle cx="0" cy="0" r="3.5" fill="#00B4D8"/></svg></div>
+<div class="hud hud-tr"><svg width="70" height="70"><path d="M70 70 L70 0 L0 0" fill="none" stroke="#1E56A4" stroke-width="1.5" opacity=".7"/><circle cx="70" cy="0" r="3.5" fill="#00B4D8"/></svg></div>
+<div class="hud hud-bl"><svg width="70" height="70"><path d="M0 0 L0 70 L70 70" fill="none" stroke="#1E56A4" stroke-width="1.5" opacity=".7"/><circle cx="0" cy="70" r="3.5" fill="#00B4D8"/></svg></div>
+<div class="hud hud-br"><svg width="70" height="70"><path d="M70 0 L70 70 L0 70" fill="none" stroke="#1E56A4" stroke-width="1.5" opacity=".7"/><circle cx="70" cy="70" r="3.5" fill="#00B4D8"/></svg></div>
+
+<!-- ============ 标题区 ============ -->
+<header class="header">
+  <div class="h-badge">
+    <div class="h-icon">粤</div>
+    <div class="h-id">
+      <span class="h-id-num">REPORT · GD-AI-2026 · NO.001</span>
+      <span class="h-id-tag">广东省人工智能产业研究图谱</span>
+      <span class="h-id-num" style="color:var(--ink4)">GUANGDONG AI INDUSTRY MAPPING</span>
+    </div>
+  </div>
+
+  <div class="h-center">
+    <h1 class="h-title">广 东 省 人 工 智 能 产 业 地 图</h1>
+    <div class="h-sub">
+      双核引领<span class="h-sub-dot"></span>多极协同<span class="h-sub-dot"></span>赛道集聚<span class="h-sub-dot"></span>全域赋能
+    </div>
+  </div>
+
+  <div class="h-stats">
+    <div class="h-stat"><div class="h-stat-n">21</div><div class="h-stat-l">地级市</div></div>
+    <div class="h-stat"><div class="h-stat-n">14</div><div class="h-stat-l">重点赛道</div></div>
+    <div class="h-stat"><div class="h-stat-n">3</div><div class="h-stat-l">产业层级</div></div>
+    <div class="h-stat"><div class="h-stat-n">100<span style="font-size:14px">+</span></div><div class="h-stat-l">代表企业</div></div>
+  </div>
+</header>
+
+<!-- ============ 主区域 ============ -->
+<div class="main">
+
+  <!-- 左列：基础层 + 技术层 -->
+  <div class="col-side">
+    <!-- 基础层 4卡 -->
+    <div class="panel" style="flex:1.75;">
+      <div class="panel-hd l1">
+        <span class="panel-hd-t">基础层重点赛道</span>
+        <span class="panel-hd-n" style="font-size:11px;letter-spacing:.08em;">L1 · 基础层</span>
+      </div>
+      <div class="panel-bd">
+        <div class="tc deep">
+          <div class="tc-name"><span class="tc-num">01</span>AI芯片 / AIoT芯片</div>
+          <div class="tc-row"><b>重点城市</b>深圳、珠海</div>
+          <div class="tc-row small"><b>代表企业</b>华为、云天励飞、全志科技、炬芯科技</div>
+        </div>
+        <div class="tc deep">
+          <div class="tc-name"><span class="tc-num">02</span>算力基础设施</div>
+          <div class="tc-row"><b>重点城市</b>韶关、湛江、阳江</div>
+          <div class="tc-row small"><b>代表企业</b>中电鹰硕、华韶数智科技、东阳光、湛江人工智能发展、中科产业</div>
+        </div>
+        <div class="tc deep">
+          <div class="tc-name"><span class="tc-num">03</span>数据服务 / 合成数据</div>
+          <div class="tc-row"><b>重点城市</b>清远、梅州</div>
+          <div class="tc-row small"><b>代表企业</b>中穆海程、星舆数据</div>
+        </div>
+        <div class="tc deep">
+          <div class="tc-name"><span class="tc-num">04</span>AI服务器 / 电子配套</div>
+          <div class="tc-row"><b>重点城市</b>惠州、河源</div>
+          <div class="tc-row small"><b>代表企业</b>胜宏科技、光弘科技、异能者（河源）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技术层 2卡 -->
+    <div class="panel" style="flex:1;">
+      <div class="panel-hd l2">
+        <span class="panel-hd-t">技术层重点赛道</span>
+        <span class="panel-hd-n" style="font-size:11px;letter-spacing:.08em;">L2 · 技术层</span>
+      </div>
+      <div class="panel-bd">
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">05</span>AI大模型</div>
+          <div class="tc-row"><b>重点城市</b>深圳、广州</div>
+          <div class="tc-row small"><b>代表企业</b>鹏城实验室、腾讯、元象科技、云从科技</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">06</span>AI视觉算法</div>
+          <div class="tc-row"><b>重点城市</b>深圳、广州</div>
+          <div class="tc-row small"><b>代表企业</b>思谋科技、云天励飞、元戎启行、商汤科技</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sep"></div>
+
+  <!-- 中部地图 -->
+  <div class="col-map">
+    <img class="map-img" src="gd-map-transparent.png" alt="广东省地图">
+    <div class="map-tint"></div>
+
+    <!-- 地图顶部信息栏 -->
+    <div class="map-top">
+      <div class="map-ttl">
+        广 东 省 人 工 智 能 产 业 地 图
+        <small>SPATIAL PATTERN · TWIN-CORE · MULTI-HUB · CLUSTER · 2026</small>
+      </div>
+      <div class="map-lgd">
+        <div class="lg"><span class="lg-c c1"></span>双核引领</div>
+        <div class="lg"><span class="lg-c c2"></span>枢纽协同</div>
+        <div class="lg"><span class="lg-c c3"></span>特色应用</div>
+      </div>
+    </div>
+
+    <!-- SVG叠加层：城市节点 + 连线 + 标注 -->
+    <svg class="map-svg" viewBox="0 0 1052 720" preserveAspectRatio="none" style="height:720px;">
+      <defs>
+        <radialGradient id="gCore" cx=".5" cy=".5" r=".5">
+          <stop offset="0%" stop-color="#00D4F5" stop-opacity=".95"/>
+          <stop offset="45%" stop-color="#00B4D8" stop-opacity=".4"/>
+          <stop offset="100%" stop-color="#1E56A4" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gHub" cx=".5" cy=".5" r=".5">
+          <stop offset="0%" stop-color="#3275D0" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#3275D0" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gSpec" cx=".5" cy=".5" r=".5">
+          <stop offset="0%" stop-color="#00B4D8" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#00B4D8" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="fGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="fGlow2" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ====== 连线网络 ====== -->
+      <!-- 双核主轴线 广州-深圳 -->
+      <line x1="500" y1="320" x2="608" y2="401" stroke="#00E5FF" stroke-width="3.5" opacity="1"/>
+      <line x1="500" y1="320" x2="608" y2="401" stroke="#00D4F5" stroke-width="8" opacity=".2"/>
+
+      <!-- 广州 → 枢纽 -->
+      <line x1="500" y1="320" x2="473" y2="334" stroke="#3275D0" stroke-width="1.8" stroke-dasharray="4,2.5" opacity=".8"/>
+      <line x1="500" y1="320" x2="514" y2="401" stroke="#3275D0" stroke-width="1.5" stroke-dasharray="4,2.5" opacity=".75"/>
+      <line x1="500" y1="320" x2="392" y2="320" stroke="#3275D0" stroke-width="1.5" stroke-dasharray="4,2.5" opacity=".65"/>
+
+      <!-- 深圳 → 枢纽 -->
+      <line x1="608" y1="401" x2="567" y2="334" stroke="#3275D0" stroke-width="1.8" stroke-dasharray="4,2.5" opacity=".8"/>
+      <line x1="608" y1="401" x2="540" y2="427" stroke="#3275D0" stroke-width="1.5" stroke-dasharray="4,2.5" opacity=".75"/>
+      <line x1="608" y1="401" x2="649" y2="320" stroke="#3275D0" stroke-width="1.5" stroke-dasharray="4,2.5" opacity=".75"/>
+
+      <!-- 二级辐射线 -->
+      <line x1="473" y1="334" x2="473" y2="387" stroke="#00B4D8" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>
+      <line x1="473" y1="387" x2="311" y2="481" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,3" opacity=".45"/>
+      <line x1="392" y1="320" x2="338" y2="347" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,3" opacity=".45"/>
+      <line x1="500" y1="320" x2="473" y2="240" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,3" opacity=".4"/>
+      <line x1="649" y1="320" x2="689" y2="240" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,3" opacity=".4"/>
+      <line x1="608" y1="401" x2="783" y2="361" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,3" opacity=".4"/>
+      <line x1="500" y1="320" x2="540" y2="94" stroke="#00B4D8" stroke-width=".8" stroke-dasharray="2,4" opacity=".3"/>
+
+      <!-- ====== 城市节点 ====== -->
+
+      <!-- 广州 双核1 -->
+      <circle cx="500" cy="320" r="36" fill="url(#gCore)"/>
+      <circle cx="500" cy="320" r="15" fill="#0D2B4D" stroke="#00D4F5" stroke-width="2.5" filter="url(#fGlow)"/>
+      <circle cx="500" cy="320" r="7" fill="#00D4F5"/>
+      <circle cx="500" cy="320" r="2.5" fill="#fff"/>
+      <!-- 广州 标注（左上方） -->
+      <text x="500" y="297" text-anchor="middle" font-family="Noto Serif SC" font-weight="900" font-size="28" fill="#08213C">广州</text>
+      <text x="500" y="344" text-anchor="middle" font-family="Noto Sans SC" font-size="18" fill="#1E56A4">模型应用 · 自动驾驶 · AI+文娱</text>
+
+      <!-- 深圳 双核2 -->
+      <circle cx="608" cy="401" r="36" fill="url(#gCore)"/>
+      <circle cx="608" cy="401" r="15" fill="#0D2B4D" stroke="#00D4F5" stroke-width="2.5" filter="url(#fGlow)"/>
+      <circle cx="608" cy="401" r="7" fill="#00D4F5"/>
+      <circle cx="608" cy="401" r="2.5" fill="#fff"/>
+      <!-- 深圳 标注（下方） -->
+      <text x="608" y="426" text-anchor="middle" font-family="Noto Serif SC" font-weight="900" font-size="28" fill="#08213C">深圳</text>
+      <text x="608" y="441" text-anchor="middle" font-family="Noto Sans SC" font-size="18" fill="#1E56A4">AI芯片 · 大模型 · 具身智能 · AI终端</text>
+
+      <!-- 佛山 枢纽 -->
+      <circle cx="473" cy="334" r="20" fill="url(#gHub)"/>
+      <circle cx="473" cy="334" r="8" fill="#1E56A4" stroke="#fff" stroke-width="2"/>
+      <circle cx="473" cy="334" r="3" fill="#fff"/>
+      <text x="453" y="330" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="22" fill="#0D2B4D">佛山</text>
+      <text x="453" y="343" text-anchor="end" font-family="Noto Sans SC" font-size="16" fill="#4A6585">工业AI·机器人</text>
+
+      <!-- 东莞 枢纽 -->
+      <circle cx="567" cy="334" r="20" fill="url(#gHub)"/>
+      <circle cx="567" cy="334" r="8" fill="#1E56A4" stroke="#fff" stroke-width="2"/>
+      <circle cx="567" cy="334" r="3" fill="#fff"/>
+      <text x="567" y="316" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="22" fill="#0D2B4D">东莞</text>
+      <text x="567" y="306" text-anchor="middle" font-family="Noto Sans SC" font-size="16" fill="#4A6585">智能终端·机器人</text>
+
+      <!-- 珠海 枢纽 -->
+      <circle cx="540" cy="427" r="18" fill="url(#gHub)"/>
+      <circle cx="540" cy="427" r="7.5" fill="#1E56A4" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="540" cy="427" r="2.5" fill="#fff"/>
+      <text x="540" y="449" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="22" fill="#0D2B4D">珠海</text>
+      <text x="540" y="461" text-anchor="middle" font-family="Noto Sans SC" font-size="16" fill="#4A6585">芯片·智能终端</text>
+
+      <!-- 惠州 枢纽 -->
+      <circle cx="649" cy="320" r="18" fill="url(#gHub)"/>
+      <circle cx="649" cy="320" r="7.5" fill="#1E56A4" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="649" cy="320" r="2.5" fill="#fff"/>
+      <text x="665" y="316" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="22" fill="#0D2B4D">惠州</text>
+      <text x="665" y="328" text-anchor="start" font-family="Noto Sans SC" font-size="16" fill="#4A6585">汽车电子·算力</text>
+
+      <!-- 中山 枢纽 -->
+      <circle cx="514" cy="401" r="16" fill="url(#gHub)"/>
+      <circle cx="514" cy="401" r="7" fill="#1E56A4" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="514" cy="401" r="2.5" fill="#fff"/>
+      <text x="496" y="397" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="21" fill="#0D2B4D">中山</text>
+      <text x="496" y="409" text-anchor="end" font-family="Noto Sans SC" font-size="8.5" fill="#1F3550">智能终端应用</text>
+
+      <!-- ====== 特色城市（第三层）====== -->
+
+      <!-- 韶关 -->
+      <circle cx="540" cy="94" r="13" fill="url(#gSpec)"/>
+      <circle cx="540" cy="94" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="556" y="91" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">韶关</text>
+      <text x="556" y="103" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">算力基础设施支点</text>
+
+      <!-- 清远 -->
+      <circle cx="473" cy="240" r="12" fill="url(#gSpec)"/>
+      <circle cx="473" cy="240" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="457" y="237" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">清远</text>
+      <text x="457" y="249" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">轻工智造AI应用</text>
+
+      <!-- 肇庆 -->
+      <circle cx="392" cy="320" r="12" fill="url(#gSpec)"/>
+      <circle cx="392" cy="320" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="376" y="317" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">肇庆</text>
+      <text x="376" y="329" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">工业机器人集聚</text>
+
+      <!-- 云浮 -->
+      <circle cx="338" cy="347" r="12" fill="url(#gSpec)"/>
+      <circle cx="338" cy="347" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="322" y="344" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">云浮</text>
+      <text x="322" y="356" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI养殖·现代农业</text>
+
+      <!-- 江门 -->
+      <circle cx="473" cy="387" r="12" fill="url(#gSpec)"/>
+      <circle cx="473" cy="387" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="457" y="384" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">江门</text>
+      <text x="457" y="396" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">机器人·智能制造</text>
+
+      <!-- 梅州 -->
+      <circle cx="878" cy="160" r="12" fill="url(#gSpec)"/>
+      <circle cx="878" cy="160" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="892" y="157" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">梅州</text>
+      <text x="892" y="169" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">工业无人机特色</text>
+
+      <!-- 河源 -->
+      <circle cx="689" cy="240" r="12" fill="url(#gSpec)"/>
+      <circle cx="689" cy="240" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="703" y="237" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">河源</text>
+      <text x="703" y="249" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI服务器·智能终端</text>
+
+      <!-- 汕尾 -->
+      <circle cx="783" cy="361" r="12" fill="url(#gSpec)"/>
+      <circle cx="783" cy="361" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="797" y="358" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">汕尾</text>
+      <text x="797" y="370" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI政务特色应用</text>
+
+      <!-- 揭阳 -->
+      <circle cx="919" cy="267" r="12" fill="url(#gSpec)"/>
+      <circle cx="919" cy="267" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="933" y="264" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">揭阳</text>
+      <text x="933" y="276" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI制造特色应用</text>
+
+      <!-- 汕头 -->
+      <circle cx="959" cy="280" r="13" fill="url(#gSpec)"/>
+      <circle cx="959" cy="280" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="973" y="277" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">汕头</text>
+      <text x="973" y="289" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI玩具特色应用</text>
+
+      <!-- 潮州 -->
+      <circle cx="946" cy="240" r="12" fill="url(#gSpec)"/>
+      <circle cx="946" cy="240" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="960" y="237" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">潮州</text>
+      <text x="960" y="249" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI营销·SaaS服务</text>
+
+      <!-- 阳江 -->
+      <circle cx="311" cy="481" r="12" fill="url(#gSpec)"/>
+      <circle cx="311" cy="481" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="295" y="478" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">阳江</text>
+      <text x="295" y="490" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">AI钢铁应用</text>
+
+      <!-- 茂名 -->
+      <circle cx="176" cy="507" r="12" fill="url(#gSpec)"/>
+      <circle cx="176" cy="507" r="5.5" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="160" y="504" text-anchor="end" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">茂名</text>
+      <text x="160" y="516" text-anchor="end" font-family="Noto Sans SC" font-size="15" fill="#4A6585">化工智能化应用</text>
+
+      <!-- 湛江 -->
+      <circle cx="108" cy="574" r="14" fill="url(#gSpec)"/>
+      <circle cx="108" cy="574" r="6" fill="#00B4D8" stroke="#143C78" stroke-width="1.2"/>
+      <text x="126" y="571" text-anchor="start" font-family="Noto Serif SC" font-weight="700" font-size="20" fill="#143C78">湛江</text>
+      <text x="126" y="583" text-anchor="start" font-family="Noto Sans SC" font-size="15" fill="#4A6585">重化工业智能化</text>
+
+      <!-- 组团标签背景 -->
+      <!-- 粤北 -->
+      <rect x="530" y="54" width="120" height="18" rx="3" fill="rgba(20,60,120,.18)"/>
+      <text x="590" y="67" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="18" fill="#fff" letter-spacing="3">粤北支撑组团</text>
+      <!-- 粤东 -->
+      <rect x="925" y="198" width="120" height="18" rx="3" fill="rgba(20,60,120,.18)"/>
+      <text x="985" y="211" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="18" fill="#fff" letter-spacing="3">粤东特色组团</text>
+      <!-- 粤西 -->
+      <rect x="55" y="454" width="120" height="18" rx="3" fill="rgba(20,60,120,.18)"/>
+      <text x="115" y="467" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="18" fill="#fff" letter-spacing="3">粤西应用组团</text>
+      <!-- 珠三角 -->
+      <text x="535" y="372" text-anchor="middle" font-family="Noto Serif SC" font-weight="700" font-size="22" fill="rgba(8,33,60,.18)" letter-spacing="5">珠 三 角 双 核 网 络</text>
+    </svg>
+
+    <!-- 地图底部标签栏 -->
+    <div class="map-footer">
+      <span class="mf-tag">SOURCE · GUANGDONG AI INDUSTRY MAPPING 2026</span>
+      <span class="mf-tag">底图来源：广东省自然资源厅 · 粤S（2022）226号</span>
+      <span class="mf-tag">21 CITIES · 14 TRACKS · 3 LAYERS</span>
+    </div>
+    <!-- QR code badge -->
+    <div class="qr-badge">
+      <img class="qr-badge-img" src="gd-qr.png" alt="DIKI问卷">
+      <div class="qr-badge-cap">DIKI 系列产品<br>留 资 问 卷</div>
+    </div>
+  </div>
+
+  <div class="col-sep"></div>
+
+  <!-- 右列：应用层 8卡 -->
+  <div class="col-side col-right">
+    <div class="panel" style="flex:1;">
+      <div class="panel-hd l3">
+        <span class="panel-hd-t">应用层重点赛道</span>
+        <span class="panel-hd-n" style="font-size:11px;letter-spacing:.08em;">L3 · 应用层</span>
+      </div>
+      <div class="panel-bd">
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">07</span>具身智能 / 人形机器人</div>
+          <div class="tc-row"><b>城市</b>深圳·东莞·广州·佛山</div>
+          <div class="tc-row small"><b>企业</b>优必选、帕西尼感知、众擎机器人、逐际动力、智平方、跨维智能、松灵机器人</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">08</span>自动驾驶 / 智能座舱</div>
+          <div class="tc-row"><b>城市</b>广州·深圳·惠州</div>
+          <div class="tc-row small"><b>企业</b>小鹏汽车、广汽集团、文远知行、小马智行、元戎启行、德赛西威、华阳集团</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">09</span>AI终端</div>
+          <div class="tc-row"><b>城市</b>深圳·东莞·珠海·中山·河源</div>
+          <div class="tc-row small"><b>企业</b>荣耀、影目科技、OPPO、vivo、小天才、星纪魅族、读书郎、乐心医疗</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">10</span>AI+医疗健康</div>
+          <div class="tc-row"><b>城市</b>深圳·广州·中山·潮州·河源·揭阳</div>
+          <div class="tc-row small"><b>企业</b>金域医学、乐心医疗、凯普生物、德澳智慧医疗、中科明我</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">11</span>AI+文旅</div>
+          <div class="tc-row"><b>城市</b>广州·汕尾·清远</div>
+          <div class="tc-row small"><b>企业</b>趣丸科技、数说故事、汕尾虎鲸、互动电子</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">12</span>AI+玩具</div>
+          <div class="tc-row"><b>城市</b>汕头</div>
+          <div class="tc-row small"><b>企业</b>奥飞娱乐、群宇互动、向远同行、实丰文化</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">13</span>AI+教育</div>
+          <div class="tc-row"><b>城市</b>中山·汕尾·阳江·云浮·河源</div>
+          <div class="tc-row small"><b>企业</b>读书郎、维皓教育、阳江小极客编程、中科华微、勇艺达科技</div>
+        </div>
+        <div class="tc">
+          <div class="tc-name"><span class="tc-num">14</span>AI+农业</div>
+          <div class="tc-row"><b>城市</b>云浮·河源·湛江·梅州</div>
+          <div class="tc-row small"><b>企业</b>温氏股份、万绿智慧农业、国联水产、市晟邦科技、成至智能</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ============ 底部矩阵 ============ -->
+<div class="matrix">
+  <div class="mx-hd">
+    <div class="mx-ttl">21 地 市 代 表 企 业 矩 阵</div>
+    <div class="mx-meta">
+      <span><b>02</b> 核心引领型</span>
+      <span><b>05</b> 枢纽协同型</span>
+      <span><b>14</b> 特色应用型</span>
+      <span style="letter-spacing:.08em;">REPRESENTATIVE ENTERPRISES MATRIX · GUANGDONG 21 CITIES</span>
+    </div>
+  </div>
+
+  <!-- 核心 -->
+  <div>
+    <div class="tier-lbl">CORE · 核心引领型 <span class="tier-tag">DUAL-CORE · 广州 + 深圳</span></div>
+    <div class="city-row" style="margin-top:6px;">
+      <div class="cc-core">
+        <div class="cc-core-h"><span class="cc-core-name">深圳</span><span class="cc-core-id">SHENZHEN · 全栈AI核心引擎</span></div>
+        <div class="cc-core-pos">AI芯片 / 大模型 / 具身智能 / AI终端 / 视觉算法</div>
+        <div class="cc-core-firms">
+          <span class="cc-core-firm">华为</span><span class="cc-core-firm">鹏城实验室</span><span class="cc-core-firm">云天励飞</span>
+          <span class="cc-core-firm">元象科技</span><span class="cc-core-firm">腾讯</span><span class="cc-core-firm">晶泰科技</span>
+          <span class="cc-core-firm">优必选</span><span class="cc-core-firm">元戎启行</span><span class="cc-core-firm">影目科技</span><span class="cc-core-firm">荣耀</span>
+        </div>
+      </div>
+      <div class="cc-core">
+        <div class="cc-core-h"><span class="cc-core-name">广州</span><span class="cc-core-id">GUANGZHOU · 模型应用创新高地</span></div>
+        <div class="cc-core-pos">行业大模型 / 自动驾驶 / AI+文娱 / AI+医疗健康</div>
+        <div class="cc-core-firms">
+          <span class="cc-core-firm">云从科技</span><span class="cc-core-firm">佳都科技</span><span class="cc-core-firm">趣丸科技</span>
+          <span class="cc-core-firm">三七互娱</span><span class="cc-core-firm">小鹏汽车</span><span class="cc-core-firm">数说故事</span>
+          <span class="cc-core-firm">广汽集团</span><span class="cc-core-firm">文远知行</span><span class="cc-core-firm">小马智行</span><span class="cc-core-firm">金域医学</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 枢纽 -->
+  <div>
+    <div class="tier-lbl">HUB · 枢纽协同型 <span class="tier-tag">5 CITIES · 珠三角</span></div>
+    <div class="city-row" style="margin-top:6px;">
+      <div class="cc-hub">
+        <div class="cc-hub-name">佛山</div>
+        <div class="cc-hub-pos">工业AI与机器人重镇</div>
+        <div class="cc-hub-firms">美云智数、华数机器人、美的集团、华沿机器人、天太机器人</div>
+      </div>
+      <div class="cc-hub">
+        <div class="cc-hub-name">东莞</div>
+        <div class="cc-hub-pos">智能终端与机器人制造高地</div>
+        <div class="cc-hub-firms">OPPO、vivo、小天才、拓斯达、李群自动化</div>
+      </div>
+      <div class="cc-hub">
+        <div class="cc-hub-name">珠海</div>
+        <div class="cc-hub-pos">芯片与智能终端协同高地</div>
+        <div class="cc-hub-firms">全志科技、炬芯科技、金山软件、星纪魅族、东信时代</div>
+      </div>
+      <div class="cc-hub">
+        <div class="cc-hub-name">惠州</div>
+        <div class="cc-hub-pos">智能汽车电子与算力配套高地</div>
+        <div class="cc-hub-firms">胜宏科技、光弘科技、德赛西威、华阳集团、亿纬锂能</div>
+      </div>
+      <div class="cc-hub">
+        <div class="cc-hub-name">中山</div>
+        <div class="cc-hub-pos">特色智能终端应用高地</div>
+        <div class="cc-hub-firms">神舞科技、读书郎、木林森、乐心医疗、欧普照明</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 特色 -->
+  <div>
+    <div class="tier-lbl">SPECIALTY · 特色应用型 <span class="tier-tag">14 CITIES</span></div>
+    <div class="city-row" style="margin-top:6px;">
+          <div class="cc-spec">
+        <div class="cc-spec-name">江门</div>
+        <div class="cc-spec-pos">机器人与智能制造特色高地</div>
+        <div class="cc-spec-firms">领益智造、中食安泓、江门德森智能、同川科技、蓝点触控</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">肇庆</div>
+        <div class="cc-spec-pos">工业机器人产业集聚高地</div>
+        <div class="cc-spec-firms">金晟新能源、无限聚合、中科智能装备、凌飞航空、金马领科</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">韶关</div>
+        <div class="cc-spec-pos">算力基础设施战略支点</div>
+        <div class="cc-spec-firms">中电鹰硕、华韶数智、信拓网络、东阳光、宝武韶钢</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">清远</div>
+        <div class="cc-spec-pos">轻工智造AI应用高地</div>
+        <div class="cc-spec-firms">中穆海程、互动电子、光合丰航、欣强电子、中昇华控</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">云浮</div>
+        <div class="cc-spec-pos">智慧养殖与现代农业特色</div>
+        <div class="cc-spec-firms">盈海科技、中科华微、燧桐链科、物联网研究院、温氏股份</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">梅州</div>
+        <div class="cc-spec-pos">工业无人机特色发展高地</div>
+        <div class="cc-spec-firms">卓启科技、市晟邦科技、成至智能、中芯云联、星舆数据</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">河源</div>
+        <div class="cc-spec-pos">AI服务器与智能终端特色城市</div>
+        <div class="cc-spec-firms">异能者（河源）、勇艺达科技、德澳智慧医疗、万绿智慧农业、美晨通讯</div>
+      </div>
+        </div>
+        <div class="city-row" style="margin-top:8px;">
+          <div class="cc-spec">
+        <div class="cc-spec-name">汕头</div>
+        <div class="cc-spec-pos">AI玩具特色应用高地</div>
+        <div class="cc-spec-firms">汕头超声电子、奥飞娱乐、群宇互动、向远同行、实丰文化</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">潮州</div>
+        <div class="cc-spec-pos">智能营销与SaaS服务特色</div>
+        <div class="cc-spec-firms">商道智能、灏学科技、微派科技、壹信智能、凯普生物</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">揭阳</div>
+        <div class="cc-spec-pos">智能制造特色应用高地</div>
+        <div class="cc-spec-firms">巨轮智能、钜欧云控、硅基生命（广东）、成发制衣、中科明我</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">汕尾</div>
+        <div class="cc-spec-pos">智慧政务特色应用高地</div>
+        <div class="cc-spec-firms">市幻空间、普云技术、汕尾虎鲸、维皓教育、汕尾秉政软件</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">湛江</div>
+        <div class="cc-spec-pos">重化工业智能化应用高地</div>
+        <div class="cc-spec-firms">派宝机器人、湛江AI发展、宝钢湛江钢铁、中科炼化、国联水产</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">茂名</div>
+        <div class="cc-spec-pos">新材料与化工智能化应用</div>
+        <div class="cc-spec-firms">长盈科技、东华能源、百越数据、茂名石化、茂名发展集团</div>
+      </div>
+          <div class="cc-spec">
+        <div class="cc-spec-name">阳江</div>
+        <div class="cc-spec-pos">钢铁智能化应用高地</div>
+        <div class="cc-spec-firms">鼎兴达、鸣康仪云、中科产业、阳春新钢铁、阳江小极客编程</div>
+      </div>
+        </div>
+  </div>
+
+</div><!-- /matrix -->
+
+</div><!-- /poster -->
+</body>
+</html>
