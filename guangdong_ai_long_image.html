@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>广东 AI 不卷模型，卷应用落地</title>
+    <style>
+      :root {
+        --navy: #0b2240;
+        --blue: #1463ff;
+        --cyan: #00a6c8;
+        --gold: #f2a900;
+        --orange: #f26430;
+        --green: #17a66a;
+        --ink: #152033;
+        --muted: #5d6a7c;
+        --line: #d8e2ee;
+        --paper: #f8fbff;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #dbe5f0;
+        color: var(--ink);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      }
+
+      .poster {
+        width: 1080px;
+        margin: 0 auto;
+        background:
+          linear-gradient(90deg, rgba(11, 34, 64, 0.035) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(11, 34, 64, 0.035) 1px, transparent 1px),
+          var(--paper);
+        background-size: 36px 36px;
+        overflow: hidden;
+      }
+
+      .hero {
+        position: relative;
+        padding: 72px 66px 58px;
+        color: var(--white);
+        background:
+          radial-gradient(circle at 14% 18%, rgba(0, 166, 200, 0.45), transparent 28%),
+          radial-gradient(circle at 88% 22%, rgba(242, 169, 0, 0.22), transparent 32%),
+          linear-gradient(135deg, #07182e 0%, #0d2c55 58%, #123b64 100%);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, transparent 0 18%, rgba(255, 255, 255, 0.08) 18% 19%, transparent 19% 100%),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.055) 0 1px, transparent 1px 72px);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 30px;
+        font-size: 25px;
+        font-weight: 700;
+        letter-spacing: 0;
+        color: #b8f4ff;
+      }
+
+      .eyebrow::before {
+        content: "";
+        display: block;
+        width: 56px;
+        height: 4px;
+        background: var(--gold);
+      }
+
+      h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 68px;
+        line-height: 1.12;
+        letter-spacing: 0;
+        font-weight: 900;
+      }
+
+      .hero .accent {
+        color: #ffd76b;
+      }
+
+      .hero-sub {
+        position: relative;
+        z-index: 1;
+        margin: 30px 0 0;
+        max-width: 820px;
+        font-size: 31px;
+        line-height: 1.5;
+        color: #dcecff;
+        font-weight: 600;
+      }
+
+      .hero-metrics {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 46px;
+      }
+
+      .hero-metric {
+        padding: 22px 18px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .hero-metric strong {
+        display: block;
+        font-size: 38px;
+        line-height: 1;
+        color: #ffffff;
+      }
+
+      .hero-metric span {
+        display: block;
+        margin-top: 12px;
+        font-size: 21px;
+        color: #bcd1ea;
+        font-weight: 700;
+      }
+
+      .section {
+        padding: 56px 58px 6px;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: 88px 1fr;
+        gap: 22px;
+        align-items: start;
+        margin-bottom: 30px;
+      }
+
+      .num {
+        height: 88px;
+        display: grid;
+        place-items: center;
+        background: var(--navy);
+        color: #fff;
+        font-size: 42px;
+        font-weight: 900;
+      }
+
+      .section h2 {
+        margin: 0;
+        font-size: 43px;
+        line-height: 1.22;
+        letter-spacing: 0;
+        font-weight: 900;
+      }
+
+      .lead {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 27px;
+        line-height: 1.55;
+        font-weight: 650;
+      }
+
+      .blue { color: var(--blue); }
+      .gold { color: #ba7700; }
+      .orange { color: var(--orange); }
+      .green { color: var(--green); }
+
+      .panel {
+        margin: 26px 0;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid var(--line);
+        box-shadow: 0 14px 34px rgba(15, 38, 70, 0.08);
+      }
+
+      .panel-title {
+        margin: 0 0 20px;
+        font-size: 29px;
+        line-height: 1.35;
+        font-weight: 900;
+        color: var(--navy);
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .metric-grid.four {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .metric-card {
+        padding: 21px 18px;
+        background: #ffffff;
+        border: 1px solid #cbd9e7;
+        border-top: 6px solid var(--blue);
+      }
+
+      .metric-card.gold-card {
+        border-top-color: var(--gold);
+      }
+
+      .metric-card.green-card {
+        border-top-color: var(--green);
+      }
+
+      .metric-card.orange-card {
+        border-top-color: var(--orange);
+      }
+
+      .metric-card .label {
+        font-size: 21px;
+        color: var(--muted);
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .metric-card .value {
+        margin-top: 10px;
+        font-size: 38px;
+        line-height: 1;
+        font-weight: 950;
+        color: var(--navy);
+      }
+
+      .metric-card .rank {
+        margin-top: 12px;
+        display: inline-block;
+        padding: 7px 12px;
+        background: #eff5ff;
+        color: var(--blue);
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      .compare-row {
+        display: grid;
+        grid-template-columns: 132px 1fr 92px;
+        gap: 18px;
+        align-items: center;
+        margin: 13px 0;
+        font-size: 23px;
+        font-weight: 800;
+      }
+
+      .bar {
+        height: 22px;
+        background: #e5edf6;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--blue), var(--cyan));
+      }
+
+      .bar.gold-bar span {
+        background: linear-gradient(90deg, var(--gold), #f7c85a);
+      }
+
+      .note {
+        margin: 20px 0 0;
+        padding: 18px 20px;
+        border-left: 7px solid var(--gold);
+        background: #fff7df;
+        color: #59420d;
+        font-size: 25px;
+        line-height: 1.5;
+        font-weight: 800;
+      }
+
+      .bullets {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .bullets li {
+        position: relative;
+        margin: 14px 0;
+        padding-left: 34px;
+        font-size: 27px;
+        line-height: 1.48;
+        font-weight: 700;
+      }
+
+      .bullets li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 16px;
+        width: 13px;
+        height: 13px;
+        background: var(--blue);
+      }
+
+      .bullets strong {
+        color: var(--navy);
+        font-weight: 950;
+      }
+
+      .quote-band {
+        margin: 30px 0;
+        padding: 30px 34px;
+        color: #fff;
+        background: linear-gradient(135deg, #0d2c55, #156177);
+        font-size: 34px;
+        line-height: 1.42;
+        font-weight: 950;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .rank-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .rank-item {
+        display: grid;
+        grid-template-columns: 58px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 15px 18px;
+        background: #fff;
+        border: 1px solid #d7e2ed;
+        font-size: 24px;
+        font-weight: 850;
+      }
+
+      .rank-item .place {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        color: #fff;
+        background: var(--navy);
+        font-size: 22px;
+      }
+
+      .rank-item .score {
+        color: var(--blue);
+        font-weight: 950;
+      }
+
+      .app-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+      }
+
+      .app-card {
+        min-height: 150px;
+        padding: 20px 16px;
+        background: #071d38;
+        color: #fff;
+        border-bottom: 6px solid var(--gold);
+      }
+
+      .app-card .big {
+        font-size: 36px;
+        line-height: 1;
+        font-weight: 950;
+        color: #ffdc72;
+      }
+
+      .app-card .small {
+        margin-top: 12px;
+        font-size: 21px;
+        line-height: 1.35;
+        color: #d9e8fb;
+        font-weight: 800;
+      }
+
+      .scene-title {
+        margin: 34px 0 17px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: var(--navy);
+        font-size: 28px;
+        font-weight: 950;
+      }
+
+      .scene-title::before {
+        content: "";
+        width: 42px;
+        height: 5px;
+        background: var(--orange);
+      }
+
+      .scene-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .scene {
+        padding: 18px 18px;
+        background: #fff;
+        border: 1px solid #d8e2ee;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: baseline;
+      }
+
+      .scene span {
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .scene strong {
+        font-size: 28px;
+        color: var(--orange);
+        font-weight: 950;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .chip {
+        padding: 11px 14px;
+        border: 1px solid #cbd9e7;
+        background: #fff;
+        color: #334257;
+        font-size: 22px;
+        font-weight: 850;
+      }
+
+      .footer {
+        margin-top: 56px;
+        padding: 42px 58px 54px;
+        background: #07182e;
+        color: #bcd1ea;
+        font-size: 22px;
+        line-height: 1.6;
+      }
+
+      .footer strong {
+        display: block;
+        margin-bottom: 12px;
+        color: #fff;
+        font-size: 30px;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 28px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="poster">
+      <header class="hero">
+        <div class="eyebrow">广东省 AI 产业画像 · 产业大脑数据</div>
+        <h1>广东 AI 不卷模型，<br />卷<span class="accent">应用落地</span></h1>
+        <p class="hero-sub">四个 60% 量级撑起应用第一省：企业、专利、人才、投融资一起指向真实产业场景。</p>
+        <div class="hero-metrics">
+          <div class="hero-metric"><strong>66.56%</strong><span>应用层企业</span></div>
+          <div class="hero-metric"><strong>55.72%</strong><span>应用层专利</span></div>
+          <div class="hero-metric"><strong>61.64%</strong><span>应用层人才</span></div>
+          <div class="hero-metric"><strong>63.86%</strong><span>应用层投融资事件</span></div>
+        </div>
+      </header>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">01</div>
+          <div>
+            <h2>广东 4 项硬指标全国第一，<br />撑起全国 AI 第一梯队底盘</h2>
+            <p class="lead">广东是中国 AI 企业最密集的省份之一，不只是数量大，企业梯队、标准制定、创新平台和资本热度都在第一梯队。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">四项全国第一：企业底盘不是薄薄一层，而是一整套产业厚度</p>
+          <div class="metric-grid four">
+            <div class="metric-card">
+              <div class="label">AI 企业</div>
+              <div class="value">4,761</div>
+              <div class="rank">全国第 1</div>
+            </div>
+            <div class="metric-card gold-card">
+              <div class="label">高新技术企业</div>
+              <div class="value">2,321</div>
+              <div class="rank">全国第 1</div>
+            </div>
+            <div class="metric-card green-card">
+              <div class="label">单项冠军企业</div>
+              <div class="value">52</div>
+              <div class="rank">全国第 1</div>
+            </div>
+            <div class="metric-card orange-card">
+              <div class="label">行业标准制定</div>
+              <div class="value">255</div>
+              <div class="rank">全国第 1</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="compare-row">
+            <strong>广东</strong>
+            <div class="bar"><span style="width: 100%"></span></div>
+            <strong>4,761</strong>
+          </div>
+          <div class="compare-row">
+            <strong>北京</strong>
+            <div class="bar"><span style="width: 92.6%"></span></div>
+            <strong>4,410</strong>
+          </div>
+          <div class="compare-row">
+            <strong>江苏</strong>
+            <div class="bar"><span style="width: 67.7%"></span></div>
+            <strong>3,223</strong>
+          </div>
+          <div class="compare-row">
+            <strong>上海</strong>
+            <div class="bar"><span style="width: 58.9%"></span></div>
+            <strong>2,803</strong>
+          </div>
+          <div class="compare-row">
+            <strong>浙江</strong>
+            <div class="bar"><span style="width: 47.8%"></span></div>
+            <strong>2,276</strong>
+          </div>
+          <div class="note">广东 AI 企业 4,761 家，全国第 1，占全国 16.55%。</div>
+        </div>
+
+        <div class="split">
+          <div class="panel">
+            <p class="panel-title">标准、专利：第一梯队顶端</p>
+            <ul class="bullets">
+              <li>AI 行业标准制定 <strong>255 件</strong>，全国第 1</li>
+              <li>北京 <strong>196</strong> / 上海 <strong>104</strong></li>
+              <li>AI 专利 <strong>4,040 件</strong>，全国第 2，仅次北京 4,813</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <p class="panel-title">创新载体与资本同时托举</p>
+            <ul class="bullets">
+              <li>国家级 <strong>11</strong> + 省级 <strong>66</strong> + 市级 <strong>131</strong></li>
+              <li>共 <strong>208 家</strong> AI 创新平台</li>
+              <li>投融资金额 <strong>222.04 亿元</strong>，次数 <strong>304 次</strong>，均全国第 2</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">02</div>
+          <div>
+            <h2>北有北京，南有广东：<br />京粤 AI 双子星，广东稳坐全国第二极</h2>
+            <p class="lead">综合指数、产业创新、城市指数共同说明：广东不是跟跑者，而是全国 AI 格局里的南方支点。</p>
+          </div>
+        </div>
+
+        <div class="quote-band">广东 AI 产业指数 86.25 全国第 2，距北京仅 3.70 分，领先第 3 名上海 5.07 分。</div>
+
+        <div class="panel">
+          <p class="panel-title">综合产业指数：京粤前二，广东断层领先第三</p>
+          <div class="compare-row">
+            <strong>北京</strong>
+            <div class="bar gold-bar"><span style="width: 100%"></span></div>
+            <strong>89.95</strong>
+          </div>
+          <div class="compare-row">
+            <strong>广东</strong>
+            <div class="bar"><span style="width: 95.9%"></span></div>
+            <strong>86.25</strong>
+          </div>
+          <div class="compare-row">
+            <strong>上海</strong>
+            <div class="bar"><span style="width: 90.2%"></span></div>
+            <strong>81.18</strong>
+          </div>
+          <div class="note">产业集聚 / 创新 / 成长 / 特色指数均稳居全国第 2；产业创新指数 87.99，距北京 88.59 仅 0.60 分。</div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">省内城市指数：两个全国前 5、五个全国前 22</p>
+          <div class="rank-list">
+            <div class="rank-item"><span class="place">3</span><span>深圳</span><span class="score">全国第 3</span></div>
+            <div class="rank-item"><span class="place">5</span><span>广州</span><span class="score">全国第 5</span></div>
+            <div class="rank-item"><span class="place">19</span><span>珠海</span><span class="score">全国第 19</span></div>
+            <div class="rank-item"><span class="place">20</span><span>东莞</span><span class="score">全国第 20</span></div>
+            <div class="rank-item"><span class="place">22</span><span>佛山</span><span class="score">全国第 22</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">03</div>
+          <div>
+            <h2>AI 应用 · 广东主场：<br />四个 60% 量级，领跑全国</h2>
+            <p class="lead">广东 AI 不是“技术概念型”，而是“应用落地型”。它强在把 AI 放进终端、机器人、物流、金融、城市和内容生产。</p>
+          </div>
+        </div>
+
+        <div class="app-grid">
+          <div class="app-card"><div class="big">66.56%</div><div class="small">应用层企业</div></div>
+          <div class="app-card"><div class="big">55.72%</div><div class="small">应用层专利</div></div>
+          <div class="app-card"><div class="big">61.64%</div><div class="small">应用层人才</div></div>
+          <div class="app-card"><div class="big">63.86%</div><div class="small">应用层投融资事件</div></div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">广东 AI 应用不是单点强，是场景厚：七大优势细分占全国 1/5 以上</p>
+          <div class="scene-title">AI 终端与具身智能</div>
+          <div class="scene-grid">
+            <div class="scene"><span>AI 终端</span><strong>42.3%</strong></div>
+            <div class="scene"><span>具身机器人</span><strong>24.5%</strong></div>
+          </div>
+          <div class="note">全国每 10 家 AI 终端企业，超过 4 家在广东。AI 终端 637 / 1505，接近全国一半。</div>
+
+          <div class="scene-title">AI + 行业场景渗透</div>
+          <div class="scene-grid">
+            <div class="scene"><span>AI + 物流</span><strong>23.2%</strong></div>
+            <div class="scene"><span>AI + 金融</span><strong>20.9%</strong></div>
+            <div class="scene"><span>AI + 城市</span><strong>20.9%</strong></div>
+          </div>
+
+          <div class="scene-title">AI 内容创作 / AI 办公</div>
+          <div class="scene-grid">
+            <div class="scene"><span>AI 游戏</span><strong>25.1%</strong></div>
+            <div class="scene"><span>AI 编程</span><strong>20.1%</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">04</div>
+          <div>
+            <h2>应用强省也是底座强省：<br />4 个芯片细分占全国 20%+</h2>
+            <p class="lead">广东不只有前台应用爆发，后台也有芯片、算力、云服务托底，形成“应用场景 + 硬科技底座”的组合优势。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">核心芯片：从存储到 AI 计算芯片，多点进入全国高占比区间</p>
+          <div class="metric-grid four">
+            <div class="metric-card"><div class="label">DRAM</div><div class="value">37.88%</div><div class="rank">25 / 66 家</div></div>
+            <div class="metric-card gold-card"><div class="label">存储芯片</div><div class="value">26.80%</div><div class="rank">41 / 153 家</div></div>
+            <div class="metric-card green-card"><div class="label">NPU</div><div class="value">22.55%</div><div class="rank">46 / 204 家</div></div>
+            <div class="metric-card orange-card"><div class="label">AI 计算芯片</div><div class="value">21.61%</div><div class="rank">67 / 310 家</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">算力基础设施：智算中心、云服务商、AI 服务器共同托底</p>
+          <div class="scene-grid">
+            <div class="scene"><span>智算中心</span><strong>19.90%</strong></div>
+            <div class="scene"><span>云计算服务商</span><strong>20.00%</strong></div>
+            <div class="scene"><span>AI 服务器</span><strong>18.42%</strong></div>
+          </div>
+          <div class="chip-row">
+            <div class="chip">智算中心 82 / 412 家</div>
+            <div class="chip">云计算服务商 65 / 325 家</div>
+            <div class="chip">AI 服务器 28 / 152 家</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <strong>数据口径</strong>
+        数据来自人工智能产业大脑广东省 AI 产业相关指标整理；AI 终端数据采用更新口径：广东 637 家、全国 1505 家。部分全国排名按终稿核定口径呈现。
+      </footer>
+    </main>
+  </body>
+</html>
