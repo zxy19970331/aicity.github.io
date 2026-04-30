@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>广东 AI 产业 · 小绿书六图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F7FE;
+    --bg-soft:#E8F1FF;
+    --bg-card:#FFFFFF;
+    --bg-tinted:#EAF2FF;
+
+    --ink:#0B1936;
+    --ink-2:#3F4E73;
+    --ink-3:#7886A6;
+    --ink-4:#B0BAD3;
+
+    --blue-deep:#085BFE;
+    --blue:#087EFB;
+    --blue-bright:#079BFA;
+    --cyan:#05BAF9;
+    --cyan-2:#05D5F8;
+
+    --line:#D9E4F7;
+    --line-2:#C4D4ED;
+    --line-soft:#EAF1FB;
+
+    --num-faint:#CAD8F1;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    background:#E8EBF0;font-family:'Noto Sans SC',sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  body{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0;}
+
+  /* ===== Poster Frame ===== */
+  .poster{
+    width:1080px;height:1440px;
+    background:var(--bg);
+    position:relative;overflow:hidden;
+    color:var(--ink);
+  }
+  .poster.alt{background:var(--bg-soft);}
+
+  /* 网格底纹 */
+  .grid-bg{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(8,91,254,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(8,91,254,.04) 1px, transparent 1px);
+    background-size:60px 60px;
+    pointer-events:none;
+  }
+
+  /* 顶部品牌条 */
+  .brand-bar{
+    position:absolute;top:36px;left:60px;right:60px;
+    display:flex;justify-content:space-between;align-items:center;
+    z-index:5;
+  }
+  .brand-bar .left{
+    display:flex;align-items:center;gap:12px;
+  }
+  .brand-bar .left img{height:30px;display:block;}
+  .brand-bar .left .pl{
+    font-family:'Noto Sans SC',sans-serif;font-weight:500;
+    font-size:14px;letter-spacing:.18em;color:var(--ink-2);
+    padding-left:14px;border-left:1px solid var(--line-2);
+  }
+  .brand-bar .right{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;
+  }
+
+  /* 底部页码条 */
+  .page-foot{
+    position:absolute;bottom:34px;left:60px;right:60px;
+    display:flex;justify-content:space-between;align-items:center;
+    z-index:5;font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;
+  }
+  .page-foot .pageno{
+    display:flex;align-items:center;gap:10px;
+  }
+  .page-foot .pageno .now{
+    font-size:18px;color:var(--blue-deep);font-weight:700;
+  }
+  .page-foot .pageno .sep{color:var(--ink-4);}
+  .page-foot .pageno .total{color:var(--ink-3);}
+
+  /* 顶部装饰刻度 */
+  .ruler-top, .ruler-bot{
+    position:absolute;left:60px;right:60px;height:8px;
+    display:flex;justify-content:space-between;align-items:center;
+    z-index:4;pointer-events:none;
+  }
+  .ruler-top{top:84px;}
+  .ruler-bot{bottom:78px;}
+  .ruler-top span, .ruler-bot span{
+    width:1px;height:6px;background:var(--line-2);
+  }
+  .ruler-top span:nth-child(5n+1),
+  .ruler-bot span:nth-child(5n+1){height:10px;background:var(--line);}
+
+  /* ====== POSTER 01 · COVER ====== */
+  .p01 .cover-inner{
+    position:absolute;inset:140px 80px 130px;
+    display:flex;flex-direction:column;
+  }
+  .p01 .eyebrow{
+    font-family:'Space Mono',monospace;font-size:13px;
+    letter-spacing:.32em;color:var(--blue-deep);text-transform:uppercase;
+    margin-top:46px;
+  }
+  .p01 .eyebrow-cn{
+    font-family:'Noto Sans SC',sans-serif;font-weight:500;
+    font-size:18px;letter-spacing:.36em;color:var(--ink-2);
+    margin-top:14px;
+  }
+  .p01 h1{
+    font-family:'Noto Serif SC',serif;
+    font-size:108px;font-weight:900;line-height:1.18;
+    color:var(--ink);
+    margin-top:78px;letter-spacing:-.01em;
+  }
+  .p01 h1 .strike{
+    position:relative;color:var(--ink-3);font-weight:600;
+  }
+  .p01 h1 .strike::after{
+    content:'';position:absolute;left:-2%;right:-2%;top:54%;height:7px;
+    background:var(--ink-3);transform:rotate(-2deg);
+    border-radius:3px;
+  }
+  .p01 h1 .accent{
+    color:var(--blue-deep);
+    background:linear-gradient(180deg,transparent 60%,rgba(8,91,254,.16) 60%);
+    padding:0 8px;
+  }
+  .p01 .source{
+    margin-top:50px;display:inline-flex;align-items:center;gap:10px;
+    padding:10px 18px;background:#fff;border-radius:30px;
+    border:1px solid var(--line);width:fit-content;
+    font-size:14px;color:var(--ink-2);font-weight:500;
+  }
+  .p01 .source .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan-2);
+    animation:pulse 2s infinite;
+  }
+  .p01 .source b{color:var(--blue-deep);font-weight:700;}
+  @keyframes pulse{
+    0%,100%{opacity:1}50%{opacity:.4}
+  }
+
+  .p01 .punchline{
+    margin-top:auto;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
+    color:#fff;padding:36px 40px;border-radius:18px;
+    box-shadow:0 22px 50px -20px rgba(8,91,254,.5);
+    display:flex;align-items:center;gap:32px;
+  }
+  .p01 .punchline .num{
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:130px;line-height:1;letter-spacing:-.02em;
+  }
+  .p01 .punchline .num .pct{
+    font-family:'JetBrains Mono',monospace;font-weight:800;
+    font-size:42px;color:var(--cyan-2);margin-left:6px;
+  }
+  .p01 .punchline .desc .lab{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.3em;color:var(--cyan-2);text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .p01 .punchline .desc .text{
+    font-family:'Noto Serif SC',serif;font-weight:700;font-size:30px;
+    line-height:1.4;
+  }
+
+  /* ====== Section header (used in P02-P05) ====== */
+  .sec-header{
+    position:absolute;top:140px;left:80px;right:80px;
+  }
+  .sec-bignum{
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:160px;line-height:1;color:var(--num-faint);
+    letter-spacing:-.04em;
+  }
+  .sec-eyebrow{
+    margin-top:12px;
+    font-family:'Space Mono',monospace;font-size:13px;
+    letter-spacing:.32em;color:var(--blue-deep);text-transform:uppercase;
+  }
+  .sec-title{
+    margin-top:18px;
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:54px;line-height:1.28;color:var(--ink);
+    letter-spacing:-.005em;
+  }
+  .sec-title .hi{
+    color:var(--blue-deep);
+    background:linear-gradient(180deg,transparent 64%,rgba(8,91,254,.18) 64%);
+    padding:0 4px;
+  }
+  .sec-sub{
+    margin-top:18px;font-family:'Noto Sans SC',sans-serif;
+    font-weight:500;font-size:20px;color:var(--ink-2);
+    line-height:1.6;
+  }
+
+  /* ====== POSTER 02 · BASELINE ====== */
+  .p02 .body{
+    position:absolute;top:570px;left:80px;right:80px;bottom:130px;
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  }
+  .stat-card{
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:32px 30px;display:flex;flex-direction:column;
+    position:relative;overflow:hidden;
+  }
+  .stat-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--blue-deep),var(--cyan));
+  }
+  .stat-card .lab{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;
+  }
+  .stat-card .num{
+    margin-top:8px;
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:88px;line-height:1;color:var(--ink);
+    letter-spacing:-.02em;
+  }
+  .stat-card .num .unit{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;
+    font-size:26px;color:var(--ink-2);margin-left:8px;
+  }
+  .stat-card .name{
+    margin-top:14px;font-family:'Noto Sans SC',sans-serif;
+    font-weight:700;font-size:20px;color:var(--ink);
+    line-height:1.4;
+  }
+  .stat-card .runner{
+    margin-top:auto;padding-top:14px;
+    font-family:'Noto Sans SC',sans-serif;font-size:14px;
+    color:var(--ink-3);font-weight:400;line-height:1.6;
+  }
+  .stat-card .gold-no1{
+    display:inline-flex;align-items:center;gap:5px;
+    margin-top:12px;width:fit-content;
+    padding:5px 12px;border-radius:6px;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 100%);
+    color:#fff;font-weight:800;font-size:13px;letter-spacing:.04em;
+    box-shadow:0 4px 12px rgba(8,123,251,.4);
+  }
+  .stat-card .gold-no1 .star{color:var(--cyan-2);}
+
+  /* ====== POSTER 03 · INDEX ====== */
+  .p03 .body{
+    position:absolute;top:570px;left:80px;right:80px;bottom:130px;
+    display:flex;flex-direction:column;gap:26px;
+  }
+  .index-row{
+    display:flex;align-items:center;gap:16px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:18px 22px;position:relative;
+  }
+  .index-row.gd{border-color:var(--blue-deep);box-shadow:0 8px 24px -10px rgba(8,91,254,.35);}
+  .index-row .city-name{
+    width:88px;font-family:'Noto Sans SC',sans-serif;
+    font-weight:700;font-size:22px;color:var(--ink);
+  }
+  .index-row.gd .city-name{color:var(--blue-deep);}
+  .index-row .bar{
+    flex:1;height:38px;background:#E5ECF8;border-radius:8px;
+    position:relative;overflow:hidden;
+  }
+  .index-row .bar .fl{
+    height:100%;border-radius:8px;
+    display:flex;align-items:center;justify-content:flex-end;
+    padding:0 14px;color:#fff;font-family:'JetBrains Mono',monospace;
+    font-weight:800;font-size:18px;
+  }
+  .index-row .bar .fl.bj{background:linear-gradient(90deg,#ff7034,#ff9b34);}
+  .index-row .bar .fl.gd{background:linear-gradient(90deg,var(--blue-deep),var(--cyan));}
+  .index-row .bar .fl.sh{background:linear-gradient(90deg,#9aa9c4,#bcc7e0);}
+  .index-row .tag{
+    width:148px;text-align:right;font-size:13px;color:var(--ink-2);
+  }
+  .index-row .tag .no{
+    display:inline-block;padding:2px 9px;border-radius:5px;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:11px;
+    margin-bottom:4px;
+  }
+  .index-row .tag .no.bj{background:#FFF1E8;color:#E2611D;}
+  .index-row .tag .no.gd{background:rgba(8,91,254,.12);color:var(--blue-deep);}
+  .index-row .tag .no.sh{background:#EEF1F8;color:var(--ink-2);}
+  .index-row .tag b{color:var(--blue-deep);}
+
+  .quad-mini{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    margin-top:6px;
+  }
+  .quad-mini .qm{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:14px 12px;text-align:center;
+  }
+  .quad-mini .qm .lb{
+    font-size:12px;color:var(--ink-3);font-weight:500;line-height:1.3;
+  }
+  .quad-mini .qm .vl{
+    margin-top:6px;font-family:'JetBrains Mono',monospace;
+    font-weight:800;font-size:22px;color:var(--blue-deep);
+  }
+  .quad-mini .qm .gp{
+    margin-top:4px;font-size:11px;color:var(--ink-3);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .city-rank-mini{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:6px;
+  }
+  .city-rank-mini .ci{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:16px 8px;text-align:center;position:relative;
+  }
+  .city-rank-mini .ci.top{
+    border-color:var(--blue-deep);
+    background:linear-gradient(180deg,#fff 0%,#EFF4FF 100%);
+  }
+  .city-rank-mini .ci .pos{
+    font-family:'JetBrains Mono',monospace;font-weight:800;
+    font-size:22px;color:var(--blue-deep);
+  }
+  .city-rank-mini .ci .city{
+    margin-top:4px;font-family:'Noto Sans SC',sans-serif;
+    font-weight:700;font-size:18px;color:var(--ink);letter-spacing:.06em;
+  }
+  .city-rank-mini .ci .nat{
+    margin-top:4px;font-family:'Space Mono',monospace;font-size:9px;
+    letter-spacing:.16em;color:var(--ink-3);
+  }
+  .city-rank-mini .ci.top .nat{color:var(--blue-deep);}
+
+  .body-h3{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;
+    font-size:18px;color:var(--ink);margin-bottom:6px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .body-h3::before{
+    content:'';width:4px;height:18px;background:var(--blue-deep);border-radius:2px;
+  }
+
+  /* ====== POSTER 04 · APPLICATION ====== */
+  .p04 .body{
+    position:absolute;top:570px;left:80px;right:80px;bottom:130px;
+    display:flex;flex-direction:column;gap:24px;
+  }
+  .quad-60{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:24px 16px;
+  }
+  .quad-60 .item{
+    text-align:center;border-right:1px solid var(--line-soft);padding:0 8px;
+  }
+  .quad-60 .item:last-child{border-right:0;}
+  .quad-60 .item .lb{
+    font-size:11px;color:var(--ink-3);font-weight:500;letter-spacing:.04em;
+  }
+  .quad-60 .item .vl{
+    margin-top:8px;font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:54px;line-height:1;color:var(--blue-deep);
+    letter-spacing:-.02em;
+  }
+  .quad-60 .item .vl .pct{font-size:22px;color:var(--blue);}
+  .quad-60 .item .nm{
+    margin-top:10px;font-size:12px;color:var(--ink-2);line-height:1.4;
+  }
+  .quad-60 .item .gold-no1{
+    display:inline-block;margin-top:8px;
+    padding:3px 10px;border-radius:5px;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 100%);
+    color:#fff;font-weight:800;font-size:11px;letter-spacing:.04em;
+  }
+
+  .app-feat{
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
+    color:#fff;border-radius:18px;padding:24px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 18px 40px -16px rgba(8,91,254,.45);
+  }
+  .app-feat .lt .cat{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--cyan-2);text-transform:uppercase;
+  }
+  .app-feat .lt h4{
+    margin-top:6px;font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:34px;
+  }
+  .app-feat .lt .qt{
+    margin-top:8px;font-size:14px;opacity:.92;line-height:1.5;
+  }
+  .app-feat .rt{text-align:right;}
+  .app-feat .rt .pct-big{
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:80px;line-height:1;letter-spacing:-.02em;
+  }
+  .app-feat .rt .pct-big .p{font-size:28px;color:var(--cyan-2);}
+  .app-feat .rt .frac{
+    margin-top:4px;font-family:'JetBrains Mono',monospace;
+    font-size:13px;color:var(--cyan-2);
+  }
+
+  .app-six{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  }
+  .app-mini{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;
+  }
+  .app-mini h5{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;
+    font-size:16px;color:var(--ink);
+  }
+  .app-mini .pc{
+    margin-top:6px;display:flex;align-items:baseline;gap:6px;
+  }
+  .app-mini .pc .v{
+    font-family:'JetBrains Mono',monospace;font-weight:800;
+    font-size:22px;color:var(--blue-deep);
+  }
+  .app-mini .pc .pp{font-size:13px;color:var(--blue);}
+  .app-mini .pc .fr{
+    margin-left:auto;font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--ink-3);
+  }
+  .app-mini .pg{
+    margin-top:8px;height:5px;background:#E5ECF8;border-radius:5px;
+    overflow:hidden;
+  }
+  .app-mini .pg .fl{
+    height:100%;background:linear-gradient(90deg,var(--blue-deep),var(--cyan));
+    border-radius:5px;
+  }
+
+  /* ====== POSTER 05 · INFRASTRUCTURE ====== */
+  .p05 .body{
+    position:absolute;top:570px;left:80px;right:80px;bottom:130px;
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .chip-grp{margin-bottom:6px;}
+  .chip-gh{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:14px;
+  }
+  .chip-gh .nm{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;
+    font-size:18px;color:var(--ink);letter-spacing:.16em;
+  }
+  .chip-gh .ln{
+    flex:1;height:1px;background:var(--line);
+  }
+  .chip-gh .en{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase;
+  }
+  .chip-row{
+    display:grid;grid-template-columns:170px 1fr 110px;align-items:center;
+    gap:18px;padding:11px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .chip-row:last-child{border-bottom:0;}
+  .chip-row .name{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:18px;color:var(--ink);
+  }
+  .chip-row .name .frac{
+    display:block;font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--ink-3);font-weight:400;
+    margin-top:2px;letter-spacing:.06em;
+  }
+  .chip-row .vis{
+    height:18px;background:#E5ECF8;border-radius:9px;overflow:hidden;
+  }
+  .chip-row .vis .fl{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
+    border-radius:9px;
+    box-shadow:0 0 14px rgba(8,123,251,.3);
+  }
+  .chip-row.algo .vis .fl{
+    background:linear-gradient(90deg,var(--cyan) 0%,var(--cyan-2) 100%);
+    box-shadow:0 0 12px rgba(5,213,248,.3);
+  }
+  .chip-row .pct{
+    text-align:right;font-family:'JetBrains Mono',monospace;
+    font-weight:800;font-size:24px;color:var(--blue-deep);
+  }
+  .chip-row.algo .pct{color:var(--cyan);}
+
+  /* ====== POSTER 06 · CLOSING ====== */
+  .p06{
+    background:linear-gradient(165deg,#0B1936 0%,#0E2456 50%,#0A1B40 100%);
+    color:#fff;
+  }
+  .p06 .grid-bg{
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  }
+  .p06 .brand-bar .left .pl{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2);}
+  .p06 .brand-bar .right{color:rgba(255,255,255,.6);}
+  .p06 .ruler-top span,.p06 .ruler-bot span{background:rgba(255,255,255,.18);}
+  .p06 .ruler-top span:nth-child(5n+1),
+  .p06 .ruler-bot span:nth-child(5n+1){background:rgba(255,255,255,.36);}
+  .p06 .page-foot{color:rgba(255,255,255,.5);}
+  .p06 .page-foot .pageno .now{color:var(--cyan-2);}
+  .p06 .page-foot .pageno .total{color:rgba(255,255,255,.6);}
+  .p06 .page-foot .pageno .sep{color:rgba(255,255,255,.3);}
+
+  .p06 .closing-inner{
+    position:absolute;inset:160px 80px 130px;
+    display:flex;flex-direction:column;
+  }
+  .p06 .clo-eyebrow{
+    font-family:'Space Mono',monospace;font-size:13px;
+    letter-spacing:.32em;color:var(--cyan-2);text-transform:uppercase;
+  }
+  .p06 h2{
+    margin-top:14px;font-family:'Noto Serif SC',serif;
+    font-weight:900;font-size:78px;line-height:1.18;
+  }
+  .p06 h2 .hi{color:var(--cyan-2);}
+  .p06 .clo-sub{
+    margin-top:24px;font-size:18px;line-height:1.7;
+    color:rgba(255,255,255,.85);max-width:780px;
+  }
+  .p06 .clo-sub b{color:#fff;}
+  .p06 .modules{
+    margin-top:32px;
+    display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+  }
+  .p06 .mod{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;padding:18px 20px;
+  }
+  .p06 .mod .mh{
+    font-family:'Noto Serif SC',serif;font-weight:700;font-size:22px;
+    color:#fff;
+  }
+  .p06 .mod .ml{
+    margin-top:8px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;
+  }
+  .p06 .contact{
+    margin-top:auto;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;padding:24px 28px;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+  }
+  .p06 .contact .lt .lb{
+    font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.28em;color:var(--cyan-2);text-transform:uppercase;
+  }
+  .p06 .contact .lt .ph{
+    margin-top:6px;font-family:'JetBrains Mono',monospace;
+    font-weight:700;font-size:30px;color:#fff;letter-spacing:.04em;
+  }
+  .p06 .contact .lt .tip{
+    margin-top:4px;font-size:13px;color:rgba(255,255,255,.7);
+    display:flex;align-items:center;gap:8px;
+  }
+  .p06 .contact .lt .tip::before{content:'→';color:var(--cyan-2);}
+  .p06 .contact .qr{
+    background:#fff;padding:10px;border-radius:12px;
+    box-shadow:0 8px 26px rgba(5,213,248,.3);
+  }
+  .p06 .contact .qr img{display:block;width:130px;height:130px;border-radius:6px;}
+  .p06 .contact .qr .lab{
+    margin-top:6px;text-align:center;font-size:11px;
+    color:var(--ink-3);padding-top:6px;border-top:1px dashed #DDE7F5;
+  }
+
+  /* 章节大字幽灵效果（P02-P05 通用） */
+  .ghost-cn{
+    position:absolute;font-family:'Noto Serif SC',serif;
+    font-weight:900;font-size:560px;color:rgba(8,91,254,.04);
+    line-height:.85;letter-spacing:-.05em;
+    pointer-events:none;user-select:none;z-index:0;
+  }
+  .ghost-cn.tr{top:60px;right:-40px;}
+  .ghost-cn.bl{bottom:60px;left:-30px;}
+
+  /* 装饰角标 */
+  .corner-deco{
+    position:absolute;width:80px;height:80px;
+    border:2px solid var(--blue-deep);
+    pointer-events:none;
+  }
+  .corner-deco.tl{top:90px;left:60px;border-right:0;border-bottom:0;}
+  .corner-deco.tr{top:90px;right:60px;border-left:0;border-bottom:0;}
+  .corner-deco.bl{bottom:88px;left:60px;border-right:0;border-top:0;}
+  .corner-deco.br{bottom:88px;right:60px;border-left:0;border-top:0;}
+  .p06 .corner-deco{border-color:var(--cyan-2);}
+
+</style>
+</head>
+<body>
+
+<!-- ============== POSTER 01 · COVER ============== -->
+<div class="poster p01" id="p01">
+  <div class="grid-bg"></div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">DATA · INSIGHT · 2026</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco br"></div>
+
+  <div class="cover-inner">
+    <div class="eyebrow">GUANGDONG · AI INDUSTRY</div>
+    <div class="eyebrow-cn">数 说 系 列 / 广 东 AI 产 业 全 景</div>
+
+    <h1>
+      广东 AI<br>
+      <span class="strike">不卷模型</span><br>
+      <span class="accent">卷应用落地</span>
+    </h1>
+
+    <div class="source">
+      <span class="dot"></span>
+      <span>基于 <b>DIKI-Brain 产业大脑</b> 实时监测 · 2026.04</span>
+    </div>
+
+    <div class="punchline">
+      <div class="num">4<span class="pct">×60%</span></div>
+      <div class="desc">
+        <div class="lab">FOUR · SIXTY · 量级</div>
+        <div class="text">四个 60% 量级<br>撑起 AI 应用第一省</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>GUANGDONG · AI · 数说系列</span>
+    <div class="pageno"><span class="now">01</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+
+<!-- ============== POSTER 02 · BASELINE ============== -->
+<div class="poster p02" id="p02">
+  <div class="grid-bg"></div>
+  <div class="ghost-cn tr">壹</div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">CHAPTER 01 · BASELINE</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="sec-header">
+    <div class="sec-bignum">01</div>
+    <div class="sec-eyebrow">CHAPTER ONE · BASELINE</div>
+    <h2 class="sec-title">广东 <span class="hi">4 项硬指标</span> 全国第一<br>撑起全国 AI 第一梯队底盘</h2>
+    <div class="sec-sub">企业 · 单冠 · 高新 · 标准——四张全国金牌，构成广东 AI 产业的硬底盘。</div>
+  </div>
+
+  <div class="body">
+    <div class="stat-card">
+      <div class="lab">AI 企业总数</div>
+      <div class="num">4,761<span class="unit">家</span></div>
+      <div class="name">全国占比 16.55%</div>
+      <div class="gold-no1"><span class="star">★</span>NO.1 全国第 1</div>
+      <div class="runner">北京 4,410 / 江苏 3,223 / 上海 2,803</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">AI 单项冠军企业</div>
+      <div class="num">52<span class="unit">家</span></div>
+      <div class="name">质量层次最厚的省份</div>
+      <div class="gold-no1"><span class="star">★</span>NO.1 全国第 1</div>
+      <div class="runner">浙江 23 / 北京 21</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">AI 高新技术企业</div>
+      <div class="num">2,321<span class="unit">家</span></div>
+      <div class="name">技术认证企业最密</div>
+      <div class="gold-no1"><span class="star">★</span>NO.1 全国第 1</div>
+      <div class="runner">北京 2,049 / 江苏 1,406 / 上海 1,283</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">AI 行业标准制定</div>
+      <div class="num">255<span class="unit">件</span></div>
+      <div class="name">规则制定权站到第一梯队顶端</div>
+      <div class="gold-no1"><span class="star">★</span>NO.1 全国第 1</div>
+      <div class="runner">北京 196 / 上海 104</div>
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>BASELINE · 硬指标全国第一</span>
+    <div class="pageno"><span class="now">02</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+
+<!-- ============== POSTER 03 · INDEX ============== -->
+<div class="poster p03 alt" id="p03">
+  <div class="grid-bg"></div>
+  <div class="ghost-cn tr">贰</div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">CHAPTER 02 · INDEX</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="sec-header">
+    <div class="sec-bignum">02</div>
+    <div class="sec-eyebrow">CHAPTER TWO · INDEX</div>
+    <h2 class="sec-title">北有北京、<span class="hi">南有广东</span><br>京粤 AI 双子星 · 广东稳坐第二极</h2>
+    <div class="sec-sub">综合产业指数 86.25 · 全国第 2 · 距北京仅 3.7 分 · 领先上海 5.07 分</div>
+  </div>
+
+  <div class="body">
+    <!-- 三省指数 bar -->
+    <div>
+      <div class="body-h3">AI 综合产业指数 · 京粤断层领先</div>
+      <div class="index-row">
+        <div class="city-name">北京市</div>
+        <div class="bar"><div class="fl bj" style="width:100%">89.95</div></div>
+        <div class="tag"><span class="no bj">NO.1</span></div>
+      </div>
+      <div class="index-row gd" style="margin-top:8px;">
+        <div class="city-name">广东省</div>
+        <div class="bar"><div class="fl gd" style="width:95.9%">86.25</div></div>
+        <div class="tag"><span class="no gd">NO.2</span><br><b>距 NO.1 仅 3.7 分</b></div>
+      </div>
+      <div class="index-row" style="margin-top:8px;">
+        <div class="city-name">上海市</div>
+        <div class="bar"><div class="fl sh" style="width:90.3%">81.18</div></div>
+        <div class="tag"><span class="no sh">NO.3</span></div>
+      </div>
+    </div>
+
+    <!-- 四项分指数 -->
+    <div>
+      <div class="body-h3">四项分指数均稳居全国第 2 · 创新分仅差北京 0.6</div>
+      <div class="quad-mini">
+        <div class="qm">
+          <div class="lb">产业集聚</div>
+          <div class="vl">83.99</div>
+          <div class="gp">差 7.17</div>
+        </div>
+        <div class="qm">
+          <div class="lb">产业创新 ★</div>
+          <div class="vl">87.99</div>
+          <div class="gp" style="color:var(--blue-deep);font-weight:700;">差 0.60</div>
+        </div>
+        <div class="qm">
+          <div class="lb">产业成长</div>
+          <div class="vl">79.85</div>
+          <div class="gp">差 1.21</div>
+        </div>
+        <div class="qm">
+          <div class="lb">产业特色</div>
+          <div class="vl">93.17</div>
+          <div class="gp">差 5.83</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 城市梯队 -->
+    <div>
+      <div class="body-h3">省内城市 · 两个全国前 5、五个全国前 22</div>
+      <div class="city-rank-mini">
+        <div class="ci top">
+          <div class="pos">NO.3</div>
+          <div class="city">深 圳</div>
+          <div class="nat">NATIONAL TOP 5</div>
+        </div>
+        <div class="ci top">
+          <div class="pos">NO.5</div>
+          <div class="city">广 州</div>
+          <div class="nat">NATIONAL TOP 5</div>
+        </div>
+        <div class="ci">
+          <div class="pos">NO.19</div>
+          <div class="city">珠 海</div>
+          <div class="nat">TOP 22</div>
+        </div>
+        <div class="ci">
+          <div class="pos">NO.20</div>
+          <div class="city">东 莞</div>
+          <div class="nat">TOP 22</div>
+        </div>
+        <div class="ci">
+          <div class="pos">NO.22</div>
+          <div class="city">佛 山</div>
+          <div class="nat">TOP 22</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>INDEX · 京粤双子星</span>
+    <div class="pageno"><span class="now">03</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+
+<!-- ============== POSTER 04 · APPLICATION ============== -->
+<div class="poster p04" id="p04">
+  <div class="grid-bg"></div>
+  <div class="ghost-cn tr">叁</div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">CHAPTER 03 · APPLICATION</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="sec-header">
+    <div class="sec-bignum">03</div>
+    <div class="sec-eyebrow">CHAPTER THREE · APPLICATION</div>
+    <h2 class="sec-title">AI 应用 · <span class="hi">广东主场</span><br>四个 60% 量级 · 领跑全国</h2>
+    <div class="sec-sub">广东 AI 不是"技术概念型"，而是"应用落地型"——3,485 家应用层企业占全国第 1。</div>
+  </div>
+
+  <div class="body">
+    <!-- 四个 60% -->
+    <div class="quad-60">
+      <div class="item">
+        <div class="lb">应用层 · 企业占比</div>
+        <div class="vl">66.56<span class="pct">%</span></div>
+        <div class="nm">3,485 家应用层企业</div>
+        <div class="gold-no1">★ NO.1 全国第 1</div>
+      </div>
+      <div class="item">
+        <div class="lb">应用层 · 专利占比</div>
+        <div class="vl">55.72<span class="pct">%</span></div>
+        <div class="nm">2,280 件应用层专利</div>
+      </div>
+      <div class="item">
+        <div class="lb">应用层 · 人才占比</div>
+        <div class="vl">61.64<span class="pct">%</span></div>
+        <div class="nm">5,178 名应用层人才</div>
+      </div>
+      <div class="item">
+        <div class="lb">应用层 · 投融资占比</div>
+        <div class="vl">63.86<span class="pct">%</span></div>
+        <div class="nm">235 起应用层融资事件</div>
+      </div>
+    </div>
+
+    <!-- 王牌细分 -->
+    <div class="app-feat">
+      <div class="lt">
+        <div class="cat">AI 终端 · 王牌标签</div>
+        <h4>AI 终端</h4>
+        <div class="qt">全国每 10 家 AI 终端企业，<br>超过 4 家在广东。</div>
+      </div>
+      <div class="rt">
+        <div class="pct-big">42.3<span class="p">%</span></div>
+        <div class="frac">637 / 1,505 家</div>
+      </div>
+    </div>
+
+    <!-- 六大优势细分 -->
+    <div>
+      <div class="body-h3">七大优势细分占全国 1/5 以上 · 最大的"AI 落地场"</div>
+      <div class="app-six">
+        <div class="app-mini">
+          <h5>具身机器人</h5>
+          <div class="pc"><span class="v">24.5</span><span class="pp">%</span><span class="fr">145 / 591</span></div>
+          <div class="pg"><div class="fl" style="width:24.5%"></div></div>
+        </div>
+        <div class="app-mini">
+          <h5>AI 游戏</h5>
+          <div class="pc"><span class="v">25.1</span><span class="pp">%</span><span class="fr">94 / 375</span></div>
+          <div class="pg"><div class="fl" style="width:25.1%"></div></div>
+        </div>
+        <div class="app-mini">
+          <h5>AI + 物流</h5>
+          <div class="pc"><span class="v">23.2</span><span class="pp">%</span><span class="fr">197 / 849</span></div>
+          <div class="pg"><div class="fl" style="width:23.2%"></div></div>
+        </div>
+        <div class="app-mini">
+          <h5>AI + 城市</h5>
+          <div class="pc"><span class="v">20.9</span><span class="pp">%</span><span class="fr">173 / 827</span></div>
+          <div class="pg"><div class="fl" style="width:20.9%"></div></div>
+        </div>
+        <div class="app-mini">
+          <h5>AI + 金融</h5>
+          <div class="pc"><span class="v">20.9</span><span class="pp">%</span><span class="fr">176 / 843</span></div>
+          <div class="pg"><div class="fl" style="width:20.9%"></div></div>
+        </div>
+        <div class="app-mini">
+          <h5>AI 编程</h5>
+          <div class="pc"><span class="v">20.1</span><span class="pp">%</span><span class="fr">34 / 169</span></div>
+          <div class="pg"><div class="fl" style="width:20.1%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>APPLICATION · 四个 60% 量级</span>
+    <div class="pageno"><span class="now">04</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+
+<!-- ============== POSTER 05 · INFRASTRUCTURE ============== -->
+<div class="poster p05 alt" id="p05">
+  <div class="grid-bg"></div>
+  <div class="ghost-cn tr">肆</div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">CHAPTER 04 · INFRASTRUCTURE</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="sec-header">
+    <div class="sec-bignum">04</div>
+    <div class="sec-eyebrow">CHAPTER FOUR · INFRASTRUCTURE</div>
+    <h2 class="sec-title">应用强省也是 <span class="hi">底座强省</span><br>4 个芯片细分占全国 20%+</h2>
+    <div class="sec-sub">DRAM / 存储芯片 / NPU / AI 计算芯片——核心芯片四张牌占全国 1/5 以上。</div>
+  </div>
+
+  <div class="body">
+    <div class="chip-grp">
+      <div class="chip-gh">
+        <span class="nm">核 心 芯 片</span>
+        <span class="ln"></span>
+        <span class="en">CORE CHIP</span>
+      </div>
+      <div class="chip-row">
+        <div class="name">DRAM<span class="frac">25 / 66 家</span></div>
+        <div class="vis"><div class="fl" style="width:75.76%"></div></div>
+        <div class="pct">37.88%</div>
+      </div>
+      <div class="chip-row">
+        <div class="name">存储芯片<span class="frac">41 / 153 家</span></div>
+        <div class="vis"><div class="fl" style="width:53.6%"></div></div>
+        <div class="pct">26.80%</div>
+      </div>
+      <div class="chip-row">
+        <div class="name">NPU<span class="frac">46 / 204 家</span></div>
+        <div class="vis"><div class="fl" style="width:45.1%"></div></div>
+        <div class="pct">22.55%</div>
+      </div>
+      <div class="chip-row">
+        <div class="name">AI 计算芯片<span class="frac">67 / 310 家</span></div>
+        <div class="vis"><div class="fl" style="width:43.22%"></div></div>
+        <div class="pct">21.61%</div>
+      </div>
+    </div>
+
+    <div class="chip-grp">
+      <div class="chip-gh">
+        <span class="nm">算 力 基 础 设 施</span>
+        <span class="ln"></span>
+        <span class="en">COMPUTE INFRA</span>
+      </div>
+      <div class="chip-row algo">
+        <div class="name">智算中心<span class="frac">82 / 412 家</span></div>
+        <div class="vis"><div class="fl" style="width:39.8%"></div></div>
+        <div class="pct">19.90%</div>
+      </div>
+      <div class="chip-row algo">
+        <div class="name">云计算服务商<span class="frac">65 / 325 家</span></div>
+        <div class="vis"><div class="fl" style="width:40%"></div></div>
+        <div class="pct">20.00%</div>
+      </div>
+      <div class="chip-row algo">
+        <div class="name">AI 服务器<span class="frac">28 / 152 家</span></div>
+        <div class="vis"><div class="fl" style="width:36.84%"></div></div>
+        <div class="pct">18.42%</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 100%);color:#fff;border-radius:14px;padding:18px 24px;margin-top:8px;font-family:'Noto Serif SC',serif;font-weight:700;font-size:22px;line-height:1.4;text-align:center;box-shadow:0 14px 30px -14px rgba(8,91,254,.45);">
+      底座硬 + 应用强 = 广东 AI 产业完整闭环
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>INFRASTRUCTURE · 底座强省</span>
+    <div class="pageno"><span class="now">05</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+
+<!-- ============== POSTER 06 · CLOSING / ABOUT ============== -->
+<div class="poster p06" id="p06">
+  <div class="grid-bg"></div>
+
+  <div class="brand-bar">
+    <div class="left">
+      <img src="assets/diki_logo.png" alt="DIKI">
+      <div class="pl">DIKI · BRAIN 产业大脑</div>
+    </div>
+    <div class="right">ABOUT US · 数字底座</div>
+  </div>
+  <div class="ruler-top">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco br"></div>
+
+  <div class="closing-inner">
+    <div class="clo-eyebrow">DIKI · BRAIN · 数据底座</div>
+    <h2>产业大脑<br><span class="hi">AI 产业的数字底座</span></h2>
+    <div class="clo-sub">
+      以 AI 产业大脑为底座，为广东省 AI 产业提供 <b>底数摸盘、精准洞察和决策支撑</b>——
+      产业链 / 创新链 / 人才链 / 资金链，四链贯通；产业概览 / 图谱 / 指数 / 技术分析，全景透视。
+    </div>
+
+    <div class="modules">
+      <div class="mod">
+        <div class="mh">产业概览</div>
+        <div class="ml">产业链 · 创新链 · 人才链 · 资金链</div>
+      </div>
+      <div class="mod">
+        <div class="mh">产业图谱</div>
+        <div class="ml">全景图 · 优劣势环节 · 上链企业 · 企业画像</div>
+      </div>
+      <div class="mod">
+        <div class="mh">产业指数</div>
+        <div class="ml">集聚 · 创新 · 成长 · 特色 · 综合竞争力</div>
+      </div>
+      <div class="mod">
+        <div class="mh">技术分析</div>
+        <div class="ml">全球专利 · 城市对标 · 科创企业 · 研发人才</div>
+      </div>
+    </div>
+
+    <div class="contact">
+      <div class="lt">
+        <div class="lb">CONTACT · 联 系 方 式</div>
+        <div class="ph">185 8821 0558</div>
+        <div class="tip">详情请咨询客服微信</div>
+      </div>
+      <div class="qr">
+        <img src="assets/wechat_qr.png" alt="客服微信二维码">
+        <div class="lab">扫码添加客服</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler-bot">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span>
+  </div>
+  <div class="page-foot">
+    <span>ABOUT · 关于我们</span>
+    <div class="pageno"><span class="now">06</span><span class="sep">/</span><span class="total">06</span></div>
+  </div>
+</div>
+
+</body>
+</html>
