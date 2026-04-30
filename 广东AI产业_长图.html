@@ -2,30 +2,42 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>广东 AI 产业 · 数据档案 No.001</title>
+<title>广东 AI 产业 · DIKI-Brain 实时监测</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0A1628;            /* 午夜蓝 */
-    --bg-2:#0F1E33;
-    --bg-3:#142940;
-    --line:#1F3551;
-    --line-2:#2A4566;
-    --ink:#F4EDE0;           /* 暖米白 */
-    --ink-2:#C7CDD7;
-    --ink-3:#8A95A6;
-    --gold:#D4A857;          /* 章节金 */
-    --orange:#E85D2C;        /* 粤橘 - 关键数据 */
-    --orange-2:#FFB347;
-    --red:#C73E2C;           /* 中国红 - 第1徽章 */
-    --cyan:#4FC3D9;          /* 科技青 - 次数据 */
-    --green:#7FB069;         /* 上升绿 */
+    /* 浅色背景体系 */
+    --bg:#F4F7FE;             /* 主背景 极淡蓝白 */
+    --bg-soft:#E8F1FF;        /* 章节交替背景 */
+    --bg-card:#FFFFFF;        /* 卡片底 */
+    --bg-tinted:#EAF2FF;      /* 浅色装饰区 */
+
+    /* 文字 */
+    --ink:#0B1936;            /* 主文字 深蓝黑 */
+    --ink-2:#3F4E73;          /* 次文字 */
+    --ink-3:#7886A6;          /* 三级灰 */
+    --ink-4:#B0BAD3;          /* 极淡 */
+
+    /* 蓝色谱系 */
+    --blue-deep:#085BFE;      /* 主强调 深蓝 */
+    --blue:#087EFB;           /* 亮蓝 */
+    --blue-bright:#079BFA;    /* 鲜亮蓝 */
+    --cyan:#05BAF9;           /* 浅亮蓝 */
+    --cyan-2:#05D5F8;         /* 最浅亮蓝 */
+
+    /* 边线 */
+    --line:#D9E4F7;
+    --line-2:#C4D4ED;
+    --line-soft:#EAF1FB;
+
+    /* 章节编号 浅蓝灰 */
+    --num:#CAD8F1;
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{background:#000;font-family:'Noto Sans SC',sans-serif;color:var(--ink);}
+  html,body{background:#E8EBF0;font-family:'Noto Sans SC',sans-serif;color:var(--ink);}
   body{display:flex;justify-content:center;}
 
   /* === Canvas === */
@@ -36,237 +48,268 @@
     overflow:hidden;
     color:var(--ink);
   }
-  /* 网格底纹 */
+  /* 网格底纹（极淡） */
   .canvas::before{
     content:'';position:absolute;inset:0;pointer-events:none;
     background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      linear-gradient(rgba(8,123,251,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(8,123,251,.04) 1px, transparent 1px);
     background-size:60px 60px;
     z-index:0;
-  }
-  /* 噪点 */
-  .canvas::after{
-    content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .35 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
-    opacity:.18;mix-blend-mode:overlay;
   }
   .layer{position:relative;z-index:2;}
 
   /* === HEADER === */
-  .hdr{padding:80px 80px 70px;position:relative;}
-  .hdr .brand{
-    display:flex;align-items:center;gap:14px;
-    font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.18em;
-    color:var(--ink-3);text-transform:uppercase;
+  .hdr{padding:60px 80px 70px;position:relative;background:linear-gradient(165deg,#E8F1FF 0%,#F4F7FE 70%);}
+  .hdr::after{
+    content:'';position:absolute;left:0;right:0;bottom:0;height:6px;
+    background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 30%,var(--cyan) 70%,var(--cyan-2) 100%);
   }
-  .hdr .brand .dot{width:8px;height:8px;background:var(--orange);border-radius:50%;box-shadow:0 0 16px var(--orange);}
-  .hdr .brand-tag{margin-left:auto;color:var(--gold);}
-  .hdr .meta{
-    display:flex;justify-content:space-between;
-    margin-top:18px;padding-bottom:24px;border-bottom:1px solid var(--line-2);
-    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-3);letter-spacing:.1em;
-  }
-  .hdr .meta .row{display:flex;gap:36px;}
-  .hdr .meta b{color:var(--ink);font-weight:400;}
 
-  .hdr .titlebox{margin-top:60px;}
+  /* logo */
+  .logo-bar{display:flex;align-items:center;gap:14px;}
+  .logo-bar .logo-img{height:64px;width:auto;display:block;}
+  .logo-bar .pl{
+    margin-left:auto;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase;
+  }
+
+  .hdr .titlebox{margin-top:80px;}
   .hdr .eyebrow{
-    font-family:'Noto Serif SC',serif;font-weight:500;font-size:18px;
-    color:var(--orange);letter-spacing:.4em;display:inline-block;
-    padding:6px 0;border-top:1px solid var(--orange);border-bottom:1px solid var(--orange);
+    font-family:'Noto Serif SC',serif;font-weight:600;font-size:16px;
+    color:var(--blue-deep);letter-spacing:.4em;display:inline-block;
+    padding:8px 20px;background:rgba(8,123,251,.08);border-radius:99px;
   }
   .hdr h1{
     font-family:'Noto Serif SC',serif;font-weight:900;
-    font-size:78px;line-height:1.18;margin-top:34px;letter-spacing:-.01em;
+    font-size:74px;line-height:1.18;margin-top:30px;letter-spacing:-.01em;color:var(--ink);
   }
-  .hdr h1 .accent{color:var(--orange);}
-  .hdr h1 .strike{
-    text-decoration:line-through;text-decoration-thickness:5px;
-    text-decoration-color:var(--red);color:var(--ink-3);
-  }
-  .hdr h1 .glow{
-    background:linear-gradient(180deg,var(--ink) 0%,var(--ink) 60%,var(--orange) 60%,var(--orange) 100%);
+  .hdr h1 .accent{
+    background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
+  .hdr h1 .strike{
+    text-decoration:line-through;text-decoration-thickness:5px;
+    text-decoration-color:var(--cyan-2);color:var(--ink-3);
+  }
+  .hdr .source-tag{
+    margin-top:30px;display:inline-flex;align-items:center;gap:10px;
+    padding:10px 18px;background:var(--bg-card);border-left:4px solid var(--blue);
+    font-family:'Noto Sans SC',sans-serif;font-size:15px;color:var(--ink-2);
+    box-shadow:0 2px 12px rgba(8,123,251,.06);
+  }
+  .hdr .source-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue);animation:pulse 2s infinite;}
+  .hdr .source-tag b{color:var(--blue-deep);font-weight:700;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
   .hdr .sub{
-    margin-top:42px;display:flex;gap:42px;align-items:flex-end;
+    margin-top:50px;display:flex;gap:42px;align-items:flex-end;
   }
   .hdr .sub .num{
     font-family:'JetBrains Mono',monospace;font-weight:800;
-    font-size:160px;line-height:.85;color:var(--orange);letter-spacing:-.04em;
+    font-size:160px;line-height:1.15;letter-spacing:-.04em;padding-top:14px;
+    background:linear-gradient(180deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .hdr .sub .num .pct{font-size:80px;color:var(--orange-2);}
+  .hdr .sub .num .pct{font-size:90px;-webkit-text-fill-color:var(--blue);color:var(--blue);}
+  /* 修复 background-clip:text 在子元素 font-size 不同时的渲染断层 - 让 % 退出渐变 */
+  .app-card .pct-row .big .pct,
+  .big-quad .val .pct{
+    -webkit-text-fill-color:var(--blue);
+    color:var(--blue);
+  }
   .hdr .sub .desc{padding-bottom:14px;}
   .hdr .sub .desc .lab{
     font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
-    color:var(--gold);text-transform:uppercase;
+    color:var(--blue);text-transform:uppercase;font-weight:700;
   }
   .hdr .sub .desc .text{
-    font-family:'Noto Serif SC',serif;font-weight:600;font-size:30px;line-height:1.4;color:var(--ink);margin-top:12px;
+    font-family:'Noto Serif SC',serif;font-weight:700;font-size:30px;line-height:1.4;color:var(--ink);margin-top:12px;
   }
-
-  /* 装饰 - 扫描线 */
-  .scanlines{
-    position:absolute;inset:0;pointer-events:none;opacity:.4;
-    background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(212,168,87,.04) 3px,rgba(212,168,87,.04) 4px);
-  }
-  .corner-tl,.corner-tr,.corner-bl,.corner-br{
-    position:absolute;width:36px;height:36px;border:2px solid var(--gold);
-  }
-  .corner-tl{top:30px;left:30px;border-right:0;border-bottom:0;}
-  .corner-tr{top:30px;right:30px;border-left:0;border-bottom:0;}
-  .corner-bl{bottom:30px;left:30px;border-right:0;border-top:0;}
-  .corner-br{bottom:30px;right:30px;border-left:0;border-top:0;}
+  .hdr .sub .desc .text .hi{color:var(--blue-deep);}
 
   /* === SECTION 通用 === */
   .sec{
-    padding:90px 80px;border-top:1px solid var(--line-2);position:relative;
+    padding:90px 80px;position:relative;border-top:1px solid var(--line);
   }
-  .sec-head{display:flex;align-items:flex-start;gap:32px;margin-bottom:60px;}
+  .sec.alt{background:var(--bg-soft);}
+  .sec-head{display:flex;align-items:flex-start;gap:32px;margin-bottom:50px;}
   .sec-num{
     font-family:'JetBrains Mono',monospace;font-weight:800;font-size:140px;
-    line-height:.85;color:var(--bg-3);letter-spacing:-.04em;
-    -webkit-text-stroke:1.5px var(--gold);text-stroke:1.5px var(--gold);
+    line-height:.85;letter-spacing:-.04em;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--cyan-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;opacity:.9;
   }
   .sec-title-wrap{flex:1;padding-top:18px;}
   .sec-eyebrow{
     font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.25em;
-    color:var(--gold);text-transform:uppercase;margin-bottom:14px;
+    color:var(--blue);text-transform:uppercase;margin-bottom:14px;font-weight:700;
   }
   .sec-title{
-    font-family:'Noto Serif SC',serif;font-weight:900;font-size:46px;line-height:1.3;color:var(--ink);
+    font-family:'Noto Serif SC',serif;font-weight:900;font-size:42px;line-height:1.32;color:var(--ink);
   }
-  .sec-title .hi{color:var(--orange);}
-  .sec-title .red{color:var(--red);}
+  .sec-title.one-line{font-size:36px;line-height:1.3;}
+  .sec-title .hi{color:var(--blue-deep);}
 
   /* 子模块标题 */
   .sub-head{
     display:flex;align-items:center;gap:14px;
     margin-bottom:22px;margin-top:46px;
   }
-  .sub-head .bar{width:4px;height:22px;background:var(--orange);}
+  .sub-head .bar{width:4px;height:22px;background:linear-gradient(180deg,var(--blue-deep) 0%,var(--cyan) 100%);}
   .sub-head h3{
-    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:22px;color:var(--ink);
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:21px;color:var(--ink);
   }
-  .sub-head h3 .hi{color:var(--orange);}
+  .sub-head h3 .hi{color:var(--blue-deep);}
+
+  /* === Pull quote === */
+  .pull{
+    margin:30px 0 0;padding:28px 32px;
+    background:linear-gradient(135deg,#E8F1FF 0%,#F4F7FE 100%);
+    border-left:5px solid var(--blue);
+    font-family:'Noto Serif SC',serif;font-weight:600;font-size:23px;line-height:1.55;color:var(--ink);
+    border-radius:0 6px 6px 0;
+  }
+  .pull .hi{color:var(--blue-deep);}
+  .pull .num{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--blue-deep);}
 
   /* === 排名条形图 === */
   .rank-list{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
   .rank-row{
-    display:grid;grid-template-columns:80px 1fr 110px;align-items:center;gap:18px;
+    display:grid;grid-template-columns:160px 1fr 200px;align-items:center;gap:20px;
   }
   .rank-row .name{
     font-family:'Noto Sans SC',sans-serif;font-weight:500;font-size:18px;color:var(--ink);
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   }
-  .rank-row.first .name{font-weight:900;color:var(--orange);}
-  .rank-row .bar-bg{height:14px;background:var(--bg-3);position:relative;border-radius:0;}
+  .rank-row.first .name{font-weight:900;color:var(--blue-deep);font-size:20px;}
+  .rank-row .bar-bg{height:14px;background:#DDE7F5;position:relative;border-radius:8px;overflow:hidden;}
   .rank-row .bar-fl{
-    height:100%;background:linear-gradient(90deg,var(--orange) 0%,var(--orange-2) 100%);
-    box-shadow:0 0 18px rgba(232,93,44,.35);
+    height:100%;background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
+    border-radius:8px;
   }
   .rank-row:not(.first) .bar-fl{
-    background:linear-gradient(90deg,var(--cyan) 0%,#79D8E8 100%);
-    box-shadow:0 0 12px rgba(79,195,217,.25);
+    background:linear-gradient(90deg,#9AB5DC 0%,#B8CDEA 100%);
   }
   .rank-row .num{
     text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px;color:var(--ink);
+    display:flex;align-items:center;justify-content:flex-end;gap:10px;
   }
-  .rank-row.first .num{color:var(--orange);}
-  .rank-row .rank-tag{
-    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-3);font-weight:500;
-  }
-  .rank-row.first .rank-tag{color:var(--gold);}
+  .rank-row.first .num{color:var(--blue-deep);font-size:26px;font-weight:800;}
 
-  /* 第1徽章 */
-  .badge1{
+  /* === NO.X 徽章 体系 === */
+  /* 广东专用 - 高亮 */
+  .gdno{
     display:inline-flex;align-items:center;gap:6px;
-    background:var(--red);color:#fff;
-    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:12px;
-    padding:4px 10px;letter-spacing:.06em;
-    border:1px solid rgba(255,255,255,.15);
+    padding:6px 14px;border-radius:8px;
+    font-family:'Noto Sans SC',sans-serif;font-weight:800;font-size:13px;letter-spacing:.04em;
+    color:#fff;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 100%);
+    box-shadow:0 4px 14px rgba(8,123,251,.4),inset 0 1px 0 rgba(255,255,255,.3);
+    text-shadow:0 1px 1px rgba(0,0,0,.15);
   }
-  .badge2{background:var(--bg-3);color:var(--cyan);border:1px solid var(--cyan);}
+  .gdno.lg{font-size:15px;padding:8px 16px;}
+  .gdno::before{content:'★';font-size:.85em;color:var(--cyan-2);text-shadow:0 0 6px rgba(255,255,255,.6);}
 
-  /* === 卡片网格 === */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  /* 其他城市/省份 - 弱化 */
+  .otno{
+    display:inline-block;
+    padding:3px 10px;border-radius:6px;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.05em;
+    color:var(--ink-3);background:var(--bg-tinted);border:1px solid var(--line-2);
+  }
+  /* 全国占比 标签 */
+  .nat-tag{
+    display:inline-block;padding:3px 10px;border-radius:6px;
+    font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:600;
+    color:var(--blue);background:rgba(8,123,251,.08);
+  }
+
+  /* === 数据卡片 === */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
 
   .card{
-    background:linear-gradient(165deg,var(--bg-2) 0%,var(--bg-3) 100%);
-    border:1px solid var(--line-2);
-    padding:26px 26px 28px;position:relative;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    padding:28px 28px 30px;position:relative;
+    box-shadow:0 4px 16px rgba(8,123,251,.05);
     overflow:hidden;
   }
   .card::before{
-    content:'';position:absolute;top:0;left:0;width:60px;height:3px;background:var(--orange);
+    content:'';position:absolute;top:0;left:0;width:80px;height:4px;
+    background:linear-gradient(90deg,var(--blue-deep) 0%,var(--cyan) 100%);
+    border-radius:0 0 4px 0;
   }
-  .card.cyan::before{background:var(--cyan);}
-  .card.gold::before{background:var(--gold);}
   .card .num-big{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:60px;line-height:1;color:var(--orange);letter-spacing:-.03em;margin-bottom:10px;
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:60px;line-height:1;letter-spacing:-.03em;margin-bottom:12px;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .card.cyan .num-big{color:var(--cyan);}
-  .card .num-big .unit{font-size:22px;color:var(--ink-2);font-weight:500;margin-left:4px;}
-  .card .num-big .pct{font-size:36px;}
+  .card .num-big .unit{font-size:22px;color:var(--ink-2);font-weight:500;margin-left:4px;-webkit-text-fill-color:var(--ink-2);}
   .card .label{
-    font-family:'Noto Sans SC',sans-serif;font-weight:500;font-size:15px;color:var(--ink-2);line-height:1.5;
+    font-family:'Noto Sans SC',sans-serif;font-weight:600;font-size:16px;color:var(--ink);line-height:1.5;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   }
   .card .sub{
-    margin-top:14px;padding-top:14px;border-top:1px dashed var(--line-2);
-    font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.06em;
+    margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);
+    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-3);letter-spacing:.06em;
   }
 
-  /* === 大数字行 === */
+  /* === 4×60% 大字行 === */
   .big-quad{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    display:grid;grid-template-columns:repeat(4,1fr);
     margin-top:30px;
-    border:1px solid var(--line-2);
-    background:var(--bg-2);
+    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 6px 22px rgba(8,123,251,.08);
   }
-  .big-quad .item{padding:30px 22px;border-right:1px solid var(--line-2);}
+  .big-quad .item{padding:32px 22px;border-right:1px solid var(--line-soft);position:relative;}
   .big-quad .item:last-child{border-right:0;}
-  .big-quad .lab{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase;}
-  .big-quad .val{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:54px;color:var(--orange);
-    margin:8px 0 6px;line-height:1;letter-spacing:-.03em;
+  .big-quad .item::before{
+    content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:50px;height:3px;background:var(--blue);border-radius:0 0 3px 3px;
   }
-  .big-quad .val .pct{font-size:30px;color:var(--orange-2);}
+  .big-quad .lab{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--blue);text-transform:uppercase;font-weight:700;}
+  .big-quad .val{
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:54px;
+    margin:10px 0 6px;line-height:1.15;letter-spacing:-.03em;padding-top:6px;
+    background:linear-gradient(180deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .big-quad .val .pct{font-size:30px;}
   .big-quad .name{font-family:'Noto Sans SC',sans-serif;font-weight:500;font-size:14px;color:var(--ink-2);}
 
-  /* === 双柱对比（指数对比） === */
+  /* === 双柱对比 === */
   .index-comp{
-    margin-top:10px;background:var(--bg-2);border:1px solid var(--line-2);
-    padding:34px 32px;
+    margin-top:10px;background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    padding:34px 32px;box-shadow:0 4px 16px rgba(8,123,251,.05);
   }
   .ic-row{display:grid;grid-template-columns:120px 1fr 200px;align-items:center;gap:24px;margin-bottom:14px;}
   .ic-row:last-child{margin-bottom:0;}
   .ic-name{font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:18px;color:var(--ink);}
-  .ic-name.gd{color:var(--orange);}
-  .ic-bar{height:42px;background:var(--bg-3);position:relative;}
+  .ic-name.gd{color:var(--blue-deep);font-size:20px;font-weight:900;}
+  .ic-bar{height:42px;background:#E5ECF8;position:relative;border-radius:8px;overflow:hidden;}
   .ic-bar .fl{
     height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;
     font-family:'JetBrains Mono',monospace;font-weight:800;font-size:22px;color:#fff;
+    border-radius:8px;
   }
-  .ic-bar .fl.bj{background:linear-gradient(90deg,#3a4d6e 0%,#5d7494 100%);}
-  .ic-bar .fl.gd{background:linear-gradient(90deg,var(--orange) 0%,var(--orange-2) 100%);}
-  .ic-bar .fl.sh{background:linear-gradient(90deg,#2a4566 0%,#3a5a7e 100%);}
+  .ic-bar .fl.bj{background:linear-gradient(90deg,#7C95C2 0%,#A4B5D6 100%);}
+  .ic-bar .fl.gd{background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);box-shadow:0 4px 18px rgba(8,123,251,.35);}
+  .ic-bar .fl.sh{background:linear-gradient(90deg,#9AB5DC 0%,#B8CDEA 100%);color:var(--ink);}
   .ic-tag{font-family:'Noto Sans SC',sans-serif;font-size:14px;color:var(--ink-2);}
-  .ic-tag b{color:var(--orange);font-weight:700;}
+  .ic-tag b{color:var(--blue-deep);font-weight:800;}
 
-  /* === 城市排名表 === */
+  /* === 城市排名 === */
   .city-rank{
     display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px;
   }
   .city-rank .item{
-    background:var(--bg-2);border:1px solid var(--line-2);padding:20px 16px;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:22px 16px;
     text-align:center;position:relative;
   }
   .city-rank .item .pos{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:36px;
-    color:var(--orange);line-height:1;
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;
+    color:var(--ink-3);line-height:1;
   }
   .city-rank .item .city{
     font-family:'Noto Serif SC',serif;font-weight:700;font-size:22px;
@@ -274,234 +317,301 @@
   }
   .city-rank .item .nat{
     font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;
-    color:var(--ink-3);margin-top:8px;text-transform:uppercase;
+    color:var(--ink-4);margin-top:8px;text-transform:uppercase;
   }
-  .city-rank .item.top{background:linear-gradient(165deg,var(--bg-3) 0%,#1c3856 100%);border-color:var(--orange);}
-  .city-rank .item.top .pos{color:var(--orange);}
+  .city-rank .item.top{
+    background:linear-gradient(165deg,#FFFFFF 0%,#E8F1FF 100%);
+    border:1px solid var(--blue);
+    box-shadow:0 6px 20px rgba(8,123,251,.18);
+  }
+  .city-rank .item.top .pos{
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    font-size:36px;
+  }
+  .city-rank .item.top .nat{color:var(--blue);}
 
-  /* === 应用细分卡片 === */
+  /* === 应用细分 === */
   .app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px;}
   .app-card{
-    background:var(--bg-2);border:1px solid var(--line-2);padding:22px;
-    position:relative;overflow:hidden;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:24px;
+    position:relative;
   }
-  .app-card .cat{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;}
+  .app-card.feat{overflow:hidden;}
+  .app-card .cat{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--blue);text-transform:uppercase;font-weight:700;}
   .app-card h4{
     font-family:'Noto Serif SC',serif;font-weight:700;font-size:24px;color:var(--ink);margin-top:6px;
   }
   .app-card .pct-row{
-    display:flex;align-items:baseline;gap:10px;margin-top:14px;
+    display:flex;align-items:baseline;gap:10px;margin-top:14px;padding-top:8px;
   }
   .app-card .pct-row .big{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:48px;color:var(--orange);line-height:1;letter-spacing:-.03em;
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:46px;line-height:1.1;letter-spacing:-.03em;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .app-card .pct-row .big .pct{font-size:28px;}
+  .app-card .pct-row .big .pct{font-size:26px;}
   .app-card .pct-row .frac{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-3);}
   .app-card .progress{
-    margin-top:14px;height:6px;background:var(--bg-3);position:relative;
+    margin-top:16px;height:6px;background:#E5ECF8;position:relative;border-radius:6px;overflow:hidden;
   }
   .app-card .progress .fl{
-    height:100%;background:linear-gradient(90deg,var(--orange) 0%,var(--orange-2) 100%);
+    height:100%;background:linear-gradient(90deg,var(--blue-deep) 0%,var(--cyan) 100%);border-radius:6px;
   }
   .app-card.feat{
     grid-column:span 3;
-    background:linear-gradient(165deg,#1a3050 0%,#0F1E33 100%);
-    border:1px solid var(--orange);
+    background:linear-gradient(135deg,#E8F1FF 0%,#F4F7FE 100%);
+    border:2px solid var(--blue);
     padding:36px;
+    box-shadow:0 8px 28px rgba(8,123,251,.15);
   }
   .app-card.feat::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--orange) 0%,var(--orange-2) 50%,var(--orange) 100%);
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);
   }
   .app-card.feat .row{display:flex;justify-content:space-between;align-items:center;}
-  .app-card.feat h4{font-size:30px;}
+  .app-card.feat h4{font-size:32px;}
   .app-card.feat .pct-row .big{font-size:88px;}
   .app-card.feat .pct-row .big .pct{font-size:48px;}
   .app-card.feat .quote{
     font-family:'Noto Serif SC',serif;font-weight:600;font-style:italic;font-size:20px;
-    color:var(--orange-2);margin-top:18px;
+    color:var(--blue-deep);margin-top:18px;
   }
-  .app-card.feat .quote::before{content:'— ';color:var(--gold);}
+  .app-card.feat .quote::before{content:'— ';color:var(--blue);}
 
   /* === 芯片底座 === */
   .chip-section{
-    margin-top:14px;background:var(--bg-2);border:1px solid var(--line-2);padding:32px;
+    margin-top:14px;background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:34px;
+    box-shadow:0 4px 16px rgba(8,123,251,.05);
   }
-  .chip-row{display:grid;grid-template-columns:160px 1fr 130px;align-items:center;gap:20px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .chip-row{display:grid;grid-template-columns:200px 1fr 130px;align-items:center;gap:20px;padding:14px 0;border-bottom:1px solid var(--line-soft);}
   .chip-row:last-child{border-bottom:0;}
   .chip-row .name{font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:18px;color:var(--ink);}
   .chip-row .name .frac{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);font-weight:400;margin-top:3px;letter-spacing:.06em;}
-  .chip-row .vis{height:18px;background:var(--bg-3);position:relative;}
-  .chip-row .vis .fl{height:100%;background:linear-gradient(90deg,var(--orange) 0%,var(--orange-2) 100%);box-shadow:0 0 18px rgba(232,93,44,.4);}
-  .chip-row.algorithm .vis .fl{background:linear-gradient(90deg,var(--cyan) 0%,#79D8E8 100%);box-shadow:0 0 12px rgba(79,195,217,.3);}
+  .chip-row .vis{height:18px;background:#E5ECF8;position:relative;border-radius:9px;overflow:hidden;}
+  .chip-row .vis .fl{height:100%;background:linear-gradient(90deg,var(--blue-deep) 0%,var(--blue) 50%,var(--cyan) 100%);border-radius:9px;box-shadow:0 0 14px rgba(8,123,251,.3);}
+  .chip-row.algorithm .vis .fl{background:linear-gradient(90deg,var(--cyan) 0%,var(--cyan-2) 100%);box-shadow:0 0 12px rgba(5,213,248,.3);}
   .chip-row .pct-num{
-    text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;color:var(--orange);letter-spacing:-.02em;
+    text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;letter-spacing:-.02em;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .chip-row.algorithm .pct-num{color:var(--cyan);}
-  .chip-group{
-    margin-top:22px;
+  .chip-row.algorithm .pct-num{
+    background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
+  .chip-group{margin-top:22px;}
+  .chip-group:first-child{margin-top:0;}
   .chip-group .gh{
-    display:flex;align-items:center;gap:10px;margin-bottom:8px;
-    font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;
+    display:flex;align-items:center;gap:14px;margin-bottom:8px;
+    font-family:'Noto Sans SC',sans-serif;font-size:15px;font-weight:700;color:var(--blue-deep);letter-spacing:.06em;
   }
-  .chip-group .gh .line{flex:1;height:1px;background:var(--line-2);}
+  .chip-group .gh .line{flex:1;height:1px;background:var(--line);}
+  .chip-group .gh .en{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.18em;}
 
-  /* === 创新载体三级 === */
-  .ladder{
-    margin-top:6px;display:flex;flex-direction:column;gap:0;
-  }
+  /* === 三级梯度 === */
+  .ladder{margin-top:6px;display:flex;flex-direction:column;gap:10px;}
   .ladder .step{
     display:grid;grid-template-columns:200px 1fr 100px;align-items:center;gap:20px;
-    padding:22px 28px;background:var(--bg-2);border-left:5px solid var(--orange);position:relative;
+    padding:22px 28px;background:var(--bg-card);border:1px solid var(--line);border-left:5px solid var(--blue-deep);
+    border-radius:0 12px 12px 0;
+    box-shadow:0 4px 14px rgba(8,123,251,.05);
   }
-  .ladder .step.s2{border-left-color:var(--orange-2);margin-left:30px;}
+  .ladder .step.s2{border-left-color:var(--blue);margin-left:30px;}
   .ladder .step.s3{border-left-color:var(--cyan);margin-left:60px;}
   .ladder .step .lvl{
     font-family:'Noto Serif SC',serif;font-weight:900;font-size:24px;color:var(--ink);
   }
   .ladder .step .lvl .en{display:block;font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-3);font-weight:400;letter-spacing:.18em;margin-top:4px;}
-  .ladder .step .vis{height:24px;background:var(--bg-3);position:relative;}
-  .ladder .step .vis .fl{height:100%;}
-  .ladder .step.s1 .vis .fl{background:var(--orange);width:8.4%;}
-  .ladder .step.s2 .vis .fl{background:var(--orange-2);width:31.7%;}
+  .ladder .step .vis{height:24px;background:#E5ECF8;position:relative;border-radius:6px;overflow:hidden;}
+  .ladder .step .vis .fl{height:100%;border-radius:6px;}
+  .ladder .step.s1 .vis .fl{background:var(--blue-deep);width:8.4%;}
+  .ladder .step.s2 .vis .fl{background:var(--blue);width:31.7%;}
   .ladder .step.s3 .vis .fl{background:var(--cyan);width:63%;}
   .ladder .step .nb{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:42px;color:var(--orange);text-align:right;line-height:1;
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:42px;text-align:right;line-height:1;
   }
-  .ladder .step.s2 .nb{color:var(--orange-2);}
+  .ladder .step.s1 .nb{color:var(--blue-deep);}
+  .ladder .step.s2 .nb{color:var(--blue);}
   .ladder .step.s3 .nb{color:var(--cyan);}
   .ladder .total{
-    text-align:right;margin-top:14px;
-    font-family:'Noto Serif SC',serif;font-weight:700;font-size:28px;color:var(--gold);
+    text-align:right;margin-top:18px;
+    font-family:'Noto Serif SC',serif;font-weight:700;font-size:26px;color:var(--blue-deep);
   }
   .ladder .total .num{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:48px;color:var(--gold);
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:46px;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
 
   /* === 投融资 === */
-  .funding-row{
-    margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:24px;
-  }
+  .funding-row{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
   .funding-card{
-    background:linear-gradient(165deg,var(--bg-2) 0%,#1a3050 100%);
-    border:1px solid var(--line-2);padding:32px;position:relative;
+    background:linear-gradient(135deg,#E8F1FF 0%,#F4F7FE 100%);
+    border:1px solid var(--line);padding:32px;position:relative;border-radius:14px;
+    box-shadow:0 6px 22px rgba(8,123,251,.08);
   }
-  .funding-card .lab{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;}
+  .funding-card .lab{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--blue);text-transform:uppercase;font-weight:700;}
   .funding-card .num{
-    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:64px;color:var(--orange);line-height:1;letter-spacing:-.03em;margin-top:14px;
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:62px;line-height:1;letter-spacing:-.03em;margin-top:14px;
+    background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue-bright) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .funding-card .num .unit{font-size:24px;color:var(--ink-2);font-weight:500;}
+  .funding-card .num .unit{font-size:24px;color:var(--ink-2);font-weight:500;-webkit-text-fill-color:var(--ink-2);}
   .funding-card .desc{
-    font-family:'Noto Sans SC',sans-serif;font-size:15px;color:var(--ink-2);margin-top:14px;line-height:1.6;
+    font-family:'Noto Sans SC',sans-serif;font-size:15px;color:var(--ink-2);margin-top:14px;line-height:1.65;
   }
   .funding-card .badge{
     position:absolute;top:24px;right:24px;
   }
 
-  /* === FOOTER === */
-  .ftr{padding:60px 80px 70px;border-top:1px solid var(--line-2);background:#06101e;}
-  .ftr .row{display:flex;justify-content:space-between;align-items:flex-end;}
-  .ftr .left{}
-  .ftr .src{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;
-  }
-  .ftr .src-text{
-    font-family:'Noto Sans SC',sans-serif;font-size:14px;color:var(--ink-2);margin-top:10px;line-height:1.7;
-  }
-  .ftr .src-text b{color:var(--ink);font-weight:500;}
-  .ftr .right{
-    text-align:right;font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.18em;
-  }
-  .ftr .right .doc{font-size:32px;color:var(--gold);font-weight:700;letter-spacing:.06em;line-height:1;}
-  .ftr .end{
-    margin-top:46px;padding-top:24px;border-top:1px dashed var(--line-2);
-    display:flex;justify-content:space-between;
-    font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:.16em;
-  }
-
-  /* 重点引用块 */
-  .pull{
-    margin:30px 0 0;padding:28px 32px;
-    background:linear-gradient(165deg,#1a3050 0%,#0F1E33 100%);
-    border-left:5px solid var(--orange);
-    font-family:'Noto Serif SC',serif;font-weight:600;font-size:24px;line-height:1.5;color:var(--ink);
-  }
-  .pull .hi{color:var(--orange);}
-  .pull .num{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--orange);}
-
-  /* 表格 */
-  .compare-table{margin-top:14px;width:100%;border-collapse:collapse;background:var(--bg-2);border:1px solid var(--line-2);}
+  /* === 表格 === */
+  .compare-table{margin-top:14px;width:100%;border-collapse:collapse;background:var(--bg-card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
   .compare-table th{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold);
-    text-transform:uppercase;padding:14px 18px;text-align:left;border-bottom:1px solid var(--line-2);background:var(--bg-3);
+    font-family:'Noto Sans SC',sans-serif;font-size:14px;letter-spacing:.06em;color:var(--blue);
+    padding:16px 18px;text-align:center;border-bottom:1px solid var(--line);background:#EAF1FB;font-weight:700;
   }
+  .compare-table th:first-child{text-align:left;}
   .compare-table td{
-    padding:16px 18px;border-bottom:1px solid var(--line);
-    font-family:'Noto Sans SC',sans-serif;font-size:16px;color:var(--ink-2);
+    padding:16px 18px;border-bottom:1px solid var(--line-soft);
+    font-family:'Noto Sans SC',sans-serif;font-size:16px;color:var(--ink-2);text-align:center;
   }
-  .compare-table tr.gd td{color:var(--orange);font-weight:700;background:rgba(232,93,44,.06);}
-  .compare-table td.num{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;}
+  .compare-table td:first-child{text-align:left;}
+  .compare-table tr.gd td{color:var(--blue-deep);font-weight:800;background:rgba(8,123,251,.06);}
+  .compare-table td.num{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;}
   .compare-table tr:last-child td{border-bottom:0;}
 
-  /* 五指标卡 */
-  .five-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px;}
-  .five-grid .item{
-    background:var(--bg-2);border:1px solid var(--line-2);padding:22px 14px;text-align:center;
-    position:relative;
+  /* === 广告区 === */
+  .ad-section{
+    background:linear-gradient(165deg,#0B1936 0%,#103473 60%,#085BFE 130%);
+    color:#fff;padding:80px 80px 70px;position:relative;overflow:hidden;
   }
-  .five-grid .item::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--orange);
+  .ad-section::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(circle at 90% 10%, rgba(5,213,248,.18) 0%, transparent 40%),
+      radial-gradient(circle at 0% 80%, rgba(8,123,251,.25) 0%, transparent 40%),
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:auto, auto, 60px 60px, 60px 60px;
   }
-  .five-grid .item .nb{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:34px;color:var(--orange);line-height:1;}
-  .five-grid .item .nb .pct{font-size:18px;}
-  .five-grid .item .lb{font-family:'Noto Sans SC',sans-serif;font-size:13px;color:var(--ink-2);margin-top:10px;line-height:1.5;}
-  .five-grid .item .rk{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.16em;margin-top:8px;}
+  .ad-section > *{position:relative;z-index:1;}
+  .ad-tag{
+    display:inline-block;padding:6px 16px;border-radius:99px;
+    background:rgba(5,213,248,.15);border:1px solid var(--cyan-2);
+    font-family:'Space Mono',monospace;font-size:12px;color:var(--cyan-2);letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  }
+  .ad-title{
+    font-family:'Noto Serif SC',serif;font-weight:900;font-size:54px;color:#fff;line-height:1.2;margin-top:24px;letter-spacing:-.01em;
+  }
+  .ad-title .hi{
+    background:linear-gradient(135deg,var(--cyan-2) 0%,#fff 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .ad-sub{
+    font-family:'Noto Sans SC',sans-serif;font-size:18px;color:rgba(255,255,255,.85);margin-top:18px;line-height:1.75;max-width:880px;
+  }
+  .ad-grid{
+    margin-top:46px;display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  }
+  .ad-mod{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(5,213,248,.2);
+    border-radius:12px;padding:24px 26px;backdrop-filter:blur(4px);
+  }
+  .ad-mod .mh{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Noto Serif SC',serif;font-weight:700;font-size:22px;color:var(--cyan-2);
+  }
+  .ad-mod .mh::before{
+    content:'';width:6px;height:24px;background:linear-gradient(180deg,var(--cyan-2) 0%,var(--blue) 100%);border-radius:3px;
+  }
+  .ad-mod .ml{
+    margin-top:14px;font-family:'Noto Sans SC',sans-serif;font-size:15px;color:rgba(255,255,255,.8);line-height:1.85;
+  }
+  .ad-mod .ml b{color:#fff;font-weight:600;}
+
+  .ad-engine{
+    margin-top:46px;padding:34px 36px;
+    background:linear-gradient(135deg,rgba(5,213,248,.12) 0%,rgba(8,123,251,.05) 100%);
+    border:1px solid rgba(5,213,248,.3);border-radius:14px;
+    text-align:center;
+  }
+  .ad-engine .et{
+    font-family:'Noto Serif SC',serif;font-weight:800;font-size:30px;color:#fff;letter-spacing:.06em;
+  }
+  .ad-engine .et .hi{color:var(--cyan-2);}
+  .ad-engine .es{
+    margin-top:10px;font-family:'Noto Sans SC',sans-serif;font-size:16px;color:rgba(255,255,255,.85);
+  }
+
+  .contact{
+    margin-top:46px;display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:center;
+  }
+  .contact .left .lab{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.25em;color:var(--cyan-2);text-transform:uppercase;font-weight:700;
+  }
+  .contact .left .phone{
+    font-family:'JetBrains Mono',monospace;font-weight:800;font-size:54px;color:#fff;margin-top:14px;letter-spacing:.04em;
+    background:linear-gradient(135deg,#fff 0%,var(--cyan-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .contact .left .qr-tip{
+    margin-top:18px;font-family:'Noto Sans SC',sans-serif;font-size:16px;color:rgba(255,255,255,.85);
+    display:flex;align-items:center;gap:10px;
+  }
+  .contact .left .qr-tip::before{content:'→';color:var(--cyan-2);font-weight:700;}
+  .contact .qr-box{
+    background:#fff;padding:14px;border-radius:14px;
+    box-shadow:0 8px 30px rgba(5,213,248,.25);
+  }
+  .contact .qr-box img{display:block;width:100%;border-radius:6px;}
+  .contact .qr-box .qrlab{
+    text-align:center;margin-top:8px;padding-top:8px;border-top:1px dashed #DDE7F5;
+    font-family:'Noto Sans SC',sans-serif;font-size:12px;color:var(--ink-3);
+  }
+
+  /* footer (轻) */
+  .micro-foot{
+    padding:30px 80px;background:#0A1428;color:rgba(255,255,255,.4);
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;
+    display:flex;justify-content:space-between;text-transform:uppercase;
+  }
 
 </style>
 </head>
 <body>
 
 <div class="canvas">
-<div class="scanlines"></div>
 <div class="layer">
 
   <!-- ===== HEADER ===== -->
   <header class="hdr">
-    <div class="corner-tl"></div><div class="corner-tr"></div>
-
-    <div class="brand">
-      <span class="dot"></span>
-      <span>BRAIN.AI · 数据档案</span>
-      <span class="brand-tag">No.001 / GUANGDONG</span>
-    </div>
-
-    <div class="meta">
-      <div class="row">
-        <span>FILE / <b>广东省 · 人工智能产业</b></span>
-        <span>DATA / <b>brain.hitech-data.cn</b></span>
-      </div>
-      <div class="row">
-        <span>DATE / <b>2026.04</b></span>
-      </div>
+    <div class="logo-bar">
+      <img class="logo-img" src="assets/diki_logo.png" alt="DiKi-Brain 产业大脑">
+      <div class="pl">广 东 AI 产 业 · 一 图 读 懂</div>
     </div>
 
     <div class="titlebox">
-      <span class="eyebrow">广东 AI 产业 · 一图读懂</span>
+      <span class="eyebrow">广 东 AI 产 业 特 征</span>
       <h1>
         广东 AI <span class="strike">不卷模型</span><br>
         <span class="accent">卷应用落地</span>
       </h1>
+
+      <div class="source-tag">
+        <span class="dot"></span>
+        <span>基于 <b>DIKI-Brain 产业大脑</b> 实时监测</span>
+      </div>
+
       <div class="sub">
-        <div class="num">4<span class="pct">×60<sup style="font-size:.45em;">%</sup></span></div>
+        <div class="num">4<span class="pct">×60%</span></div>
         <div class="desc">
           <div class="lab">FOUR · SIXTY · 量级</div>
-          <div class="text">四个 60% 量级<br>撑起 AI 应用第一省</div>
+          <div class="text">四个 60% 量级<br>撑起 <span class="hi">AI 应用第一省</span></div>
         </div>
       </div>
     </div>
-
-    <div class="corner-bl"></div><div class="corner-br"></div>
   </header>
 
   <!-- ===== SECTION 01 ===== -->
@@ -517,31 +627,31 @@
     <!-- 1.1 企业最密集 -->
     <div class="sub-head">
       <div class="bar"></div>
-      <h3>广东是中国 AI <span class="hi">企业最密集</span>的省份之一</h3>
+      <h3>广东是中国 <span class="hi">AI 企业最密集</span>的省份之一</h3>
     </div>
     <div class="rank-list">
       <div class="rank-row first">
-        <div class="name">广东省 <span class="rank-tag">CN.16.55%</span></div>
+        <div class="name">广东省 <span class="nat-tag">全国占比 16.55%</span></div>
         <div class="bar-bg"><div class="bar-fl" style="width:100%"></div></div>
-        <div class="num">4,761 <span class="badge1">N°1</span></div>
+        <div class="num"><span>4,761</span> <span class="gdno lg">NO.1</span></div>
       </div>
       <div class="rank-row">
-        <div class="name">北京市 <span class="rank-tag">N°2</span></div>
+        <div class="name">北京市 <span class="otno">NO.2</span></div>
         <div class="bar-bg"><div class="bar-fl" style="width:92.6%"></div></div>
         <div class="num">4,410</div>
       </div>
       <div class="rank-row">
-        <div class="name">江苏省 <span class="rank-tag">N°3</span></div>
+        <div class="name">江苏省 <span class="otno">NO.3</span></div>
         <div class="bar-bg"><div class="bar-fl" style="width:67.7%"></div></div>
         <div class="num">3,223</div>
       </div>
       <div class="rank-row">
-        <div class="name">上海市 <span class="rank-tag">N°4</span></div>
+        <div class="name">上海市 <span class="otno">NO.4</span></div>
         <div class="bar-bg"><div class="bar-fl" style="width:58.9%"></div></div>
         <div class="num">2,803</div>
       </div>
       <div class="rank-row">
-        <div class="name">浙江省 <span class="rank-tag">N°5</span></div>
+        <div class="name">浙江省 <span class="otno">NO.5</span></div>
         <div class="bar-bg"><div class="bar-fl" style="width:47.8%"></div></div>
         <div class="num">2,276</div>
       </div>
@@ -555,12 +665,12 @@
     <div class="grid-2">
       <div class="card">
         <div class="num-big">52<span class="unit">家</span></div>
-        <div class="label">单项冠军企业 <span class="badge1">N°1 全国第 1</span></div>
-        <div class="sub">浙江 23 / 北京 21 / 山东 11</div>
+        <div class="label">单项冠军企业 <span class="gdno">NO.1 全国第 1</span></div>
+        <div class="sub">浙江 23 / 北京 21</div>
       </div>
       <div class="card">
         <div class="num-big">2,321<span class="unit">家</span></div>
-        <div class="label">高新技术企业 <span class="badge1">N°1 全国第 1</span></div>
+        <div class="label">高新技术企业 <span class="gdno">NO.1 全国第 1</span></div>
         <div class="sub">北京 2,049 / 江苏 1,406 / 上海 1,283</div>
       </div>
     </div>
@@ -573,17 +683,17 @@
     <div class="grid-2">
       <div class="card">
         <div class="num-big">255<span class="unit">件</span></div>
-        <div class="label">AI 行业标准制定 <span class="badge1">N°1 全国第 1</span></div>
+        <div class="label">AI 行业标准制定 <span class="gdno">NO.1 全国第 1</span></div>
         <div class="sub">北京 196 / 上海 104</div>
       </div>
-      <div class="card cyan">
+      <div class="card">
         <div class="num-big">4,040<span class="unit">件</span></div>
-        <div class="label">AI 专利数 <span class="badge2">N°2 全国第 2</span></div>
+        <div class="label">AI 专利 <span class="gdno">NO.2 全国第 2</span></div>
         <div class="sub">仅次北京 4,813</div>
       </div>
     </div>
 
-    <!-- 1.4 创新载体三级 -->
+    <!-- 1.4 创新载体 -->
     <div class="sub-head" style="margin-top:54px;">
       <div class="bar"></div>
       <h3>创新载体 <span class="hi">三级梯度</span>："11 + 66 + 131"</h3>
@@ -604,7 +714,7 @@
         <div class="vis"><div class="fl"></div></div>
         <div class="nb">131</div>
       </div>
-      <div class="total">合计 <span class="num">208</span> 家 AI 创新平台</div>
+      <div class="total">合计 <span class="num">208</span> 家 AI 创新载体</div>
     </div>
 
     <!-- 1.5 投融资 -->
@@ -614,55 +724,53 @@
     </div>
     <div class="funding-row">
       <div class="funding-card">
-        <div class="badge"><span class="badge1 badge2">N°2</span></div>
+        <div class="badge"><span class="gdno">NO.2</span></div>
         <div class="lab">FUNDING · AMOUNT</div>
         <div class="num">222.04<span class="unit"> 亿元</span></div>
-        <div class="desc">近 12 月 AI 投融资金额，全国第 2<br>仅次北京 404.33 亿元</div>
+        <div class="desc">近 12 月 AI 投融资金额，<b style="color:var(--blue-deep);font-weight:800;font-size:18px;">全国第 2</b><br>仅次北京 404.33 亿元</div>
       </div>
       <div class="funding-card">
-        <div class="badge"><span class="badge1 badge2">N°2</span></div>
+        <div class="badge"><span class="gdno">NO.2</span></div>
         <div class="lab">FUNDING · COUNT</div>
         <div class="num">304<span class="unit"> 次</span></div>
-        <div class="desc">近 12 月 AI 投融资次数，全国第 2<br>距北京 314 次仅差 10 次</div>
+        <div class="desc">近 12 月 AI 投融资次数，<b style="color:var(--blue-deep);font-weight:800;font-size:18px;">全国第 2</b><br>距北京 314 次仅差 10 次</div>
       </div>
     </div>
   </section>
 
   <!-- ===== SECTION 02 ===== -->
-  <section class="sec">
+  <section class="sec alt">
     <div class="sec-head">
       <div class="sec-num">02</div>
       <div class="sec-title-wrap">
         <div class="sec-eyebrow">CHAPTER TWO · INDEX</div>
-        <h2 class="sec-title">北有北京、<span class="hi">南有广东</span><br>京粤 AI 双子星，广东稳坐全国第二极</h2>
+        <h2 class="sec-title one-line">北有北京、<span class="hi">南有广东</span>——京粤 AI 双子星<br>广东稳坐全国第二极</h2>
       </div>
     </div>
 
     <div class="pull">
       AI 综合产业指数 <span class="num">86.25</span>，全国 <span class="hi">第 2</span>——
-      距北京仅 <span class="num">3.7</span> 分，距上海 <span class="hi">甩开 5.07 分</span>断层。
+      距北京仅 <span class="num">3.7</span> 分，<span class="hi">领先上海 5.07 分</span>。
     </div>
 
-    <!-- 指数双柱对比 -->
     <div class="index-comp">
       <div class="ic-row">
         <div class="ic-name">北京市</div>
         <div class="ic-bar"><div class="fl bj" style="width:100%">89.95</div></div>
-        <div class="ic-tag">N°1 综合指数</div>
+        <div class="ic-tag"><span class="otno">NO.1</span> AI 综合指数</div>
       </div>
       <div class="ic-row">
         <div class="ic-name gd">广东省</div>
         <div class="ic-bar"><div class="fl gd" style="width:95.9%">86.25</div></div>
-        <div class="ic-tag"><b>N°2 距 N°1 仅 3.7 分</b></div>
+        <div class="ic-tag"><span class="gdno">NO.2</span> <b>距 NO.1 仅 3.7 分</b></div>
       </div>
       <div class="ic-row">
         <div class="ic-name">上海市</div>
         <div class="ic-bar"><div class="fl sh" style="width:90.3%">81.18</div></div>
-        <div class="ic-tag">N°3 距 N°2 甩 5.07 分</div>
+        <div class="ic-tag"><span class="otno">NO.3</span></div>
       </div>
     </div>
 
-    <!-- 4 分项指数 -->
     <div class="sub-head">
       <div class="bar"></div>
       <h3>产业集聚 / 创新 / 成长 / 特色——<span class="hi">四项分指数均稳居全国第 2</span></h3>
@@ -672,10 +780,10 @@
         <th>分项指数</th><th>北京</th><th>广东</th><th>上海</th><th>差距（北-粤）</th>
       </tr></thead>
       <tbody>
-        <tr><td>产业集聚指数</td><td class="num">91.16</td><td class="num gd-cell" style="color:var(--orange);font-weight:700;">83.99</td><td class="num">80.23</td><td class="num">7.17</td></tr>
+        <tr><td>产业集聚指数</td><td class="num">91.16</td><td class="num" style="color:var(--blue-deep);font-weight:800;">83.99</td><td class="num">80.23</td><td class="num">7.17</td></tr>
         <tr class="gd"><td>产业创新指数 ★</td><td class="num">88.59</td><td class="num">87.99</td><td class="num">77.50</td><td class="num"><b>仅 0.60</b></td></tr>
-        <tr><td>产业成长指数</td><td class="num">81.06</td><td class="num" style="color:var(--orange);font-weight:700;">79.85</td><td class="num">73.64</td><td class="num">1.21</td></tr>
-        <tr><td>产业特色指数</td><td class="num">99.00</td><td class="num" style="color:var(--orange);font-weight:700;">93.17</td><td class="num">93.36</td><td class="num">5.83</td></tr>
+        <tr><td>产业成长指数</td><td class="num">81.06</td><td class="num" style="color:var(--blue-deep);font-weight:800;">79.85</td><td class="num">73.64</td><td class="num">1.21</td></tr>
+        <tr><td>产业特色指数</td><td class="num">99.00</td><td class="num" style="color:var(--blue-deep);font-weight:800;">93.17</td><td class="num">93.36</td><td class="num">5.83</td></tr>
       </tbody>
     </table>
 
@@ -684,17 +792,16 @@
       <span class="num">87.99 vs 88.59</span>，全国 <span class="hi">唯一逼近北京者</span>。
     </div>
 
-    <!-- 城市排名 -->
     <div class="sub-head" style="margin-top:46px;">
       <div class="bar"></div>
       <h3>省内城市 AI 产业指数：<span class="hi">两个全国前 5、五个全国前 22</span></h3>
     </div>
     <div class="city-rank">
-      <div class="item top"><div class="pos">N°3</div><div class="city">深 圳</div><div class="nat">NATIONAL TOP 5</div></div>
-      <div class="item top"><div class="pos">N°5</div><div class="city">广 州</div><div class="nat">NATIONAL TOP 5</div></div>
-      <div class="item"><div class="pos">N°19</div><div class="city">珠 海</div><div class="nat">NATIONAL TOP 22</div></div>
-      <div class="item"><div class="pos">N°20</div><div class="city">东 莞</div><div class="nat">NATIONAL TOP 22</div></div>
-      <div class="item"><div class="pos">N°22</div><div class="city">佛 山</div><div class="nat">NATIONAL TOP 22</div></div>
+      <div class="item top"><div class="pos">NO.3</div><div class="city">深 圳</div><div class="nat">NATIONAL TOP 5</div></div>
+      <div class="item top"><div class="pos">NO.5</div><div class="city">广 州</div><div class="nat">NATIONAL TOP 5</div></div>
+      <div class="item"><div class="pos">NO.19</div><div class="city">珠 海</div><div class="nat">NATIONAL TOP 22</div></div>
+      <div class="item"><div class="pos">NO.20</div><div class="city">东 莞</div><div class="nat">NATIONAL TOP 22</div></div>
+      <div class="item"><div class="pos">NO.22</div><div class="city">佛 山</div><div class="nat">NATIONAL TOP 22</div></div>
     </div>
   </section>
 
@@ -712,12 +819,11 @@
       广东 AI 不是<span class="hi">"技术概念型"</span>，而是<span class="hi">"应用落地型"</span>。
     </div>
 
-    <!-- 四个 60% -->
     <div class="big-quad">
       <div class="item">
         <div class="lab">应用层 · 企业占比</div>
         <div class="val">66.56<span class="pct">%</span></div>
-        <div class="name">3,485 家应用层企业 · 全国第 1</div>
+        <div class="name">3,485 家应用层企业<br><span style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 12px;border-radius:6px;background:linear-gradient(135deg,var(--blue-deep) 0%,var(--blue) 100%);color:#fff;font-family:'Noto Sans SC',sans-serif;font-weight:800;font-size:13px;letter-spacing:.04em;box-shadow:0 4px 12px rgba(8,123,251,.4);"><span style="color:var(--cyan-2);">★</span>NO.1 全国第 1</span></div>
       </div>
       <div class="item">
         <div class="lab">应用层 · 专利占比</div>
@@ -736,19 +842,17 @@
       </div>
     </div>
 
-    <!-- 七大优势细分 -->
     <div class="sub-head" style="margin-top:54px;">
       <div class="bar"></div>
       <h3>广东是中国 <span class="hi">最大的 "AI 落地场"</span>——七大优势细分占全国 1/5 以上</h3>
     </div>
 
     <div class="app-grid">
-      <!-- 王牌：AI 终端 -->
       <div class="app-card feat">
         <div class="row">
           <div>
             <div class="cat">AI 终端 · 王牌标签</div>
-            <h4>AI 智能终端</h4>
+            <h4>AI 终端</h4>
             <div class="quote">全国每 10 家 AI 终端企业，超过 4 家在广东。</div>
           </div>
           <div>
@@ -767,26 +871,26 @@
         <div class="progress"><div class="fl" style="width:24.5%"></div></div>
       </div>
       <div class="app-card">
-        <div class="cat">行业场景</div>
+        <div class="cat">AI+行业场景渗透</div>
         <h4>AI + 物流</h4>
         <div class="pct-row"><div class="big">23.2<span class="pct">%</span></div><div class="frac">197 / 849</div></div>
         <div class="progress"><div class="fl" style="width:23.2%"></div></div>
       </div>
       <div class="app-card">
-        <div class="cat">行业场景</div>
+        <div class="cat">AI+行业场景渗透</div>
         <h4>AI + 金融</h4>
         <div class="pct-row"><div class="big">20.9<span class="pct">%</span></div><div class="frac">176 / 843</div></div>
         <div class="progress"><div class="fl" style="width:20.9%"></div></div>
       </div>
 
       <div class="app-card">
-        <div class="cat">行业场景</div>
+        <div class="cat">AI+行业场景渗透</div>
         <h4>AI + 城市</h4>
         <div class="pct-row"><div class="big">20.9<span class="pct">%</span></div><div class="frac">173 / 827</div></div>
         <div class="progress"><div class="fl" style="width:20.9%"></div></div>
       </div>
       <div class="app-card">
-        <div class="cat">内容创作</div>
+        <div class="cat">AI 内容创作</div>
         <h4>AI 游戏</h4>
         <div class="pct-row"><div class="big">25.1<span class="pct">%</span></div><div class="frac">94 / 375</div></div>
         <div class="progress"><div class="fl" style="width:25.1%"></div></div>
@@ -801,7 +905,7 @@
   </section>
 
   <!-- ===== SECTION 04 ===== -->
-  <section class="sec">
+  <section class="sec alt">
     <div class="sec-head">
       <div class="sec-num">04</div>
       <div class="sec-title-wrap">
@@ -812,7 +916,7 @@
 
     <div class="chip-section">
       <div class="chip-group">
-        <div class="gh"><span>核 心 芯 片</span><span class="line"></span><span>CORE CHIP</span></div>
+        <div class="gh"><span>核 心 芯 片</span><span class="line"></span><span class="en">CORE CHIP</span></div>
         <div class="chip-row">
           <div class="name">DRAM <span class="frac">25 / 66 家</span></div>
           <div class="vis"><div class="fl" style="width:75.76%"></div></div>
@@ -835,8 +939,8 @@
         </div>
       </div>
 
-      <div class="chip-group" style="margin-top:36px;">
-        <div class="gh"><span>算 力 基 础 设 施</span><span class="line"></span><span>COMPUTE INFRA</span></div>
+      <div class="chip-group">
+        <div class="gh"><span>算 力 基 础 设 施</span><span class="line"></span><span class="en">COMPUTE INFRA</span></div>
         <div class="chip-row algorithm">
           <div class="name">智算中心 <span class="frac">82 / 412 家</span></div>
           <div class="vis"><div class="fl" style="width:39.8%"></div></div>
@@ -854,35 +958,56 @@
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="pull" style="margin-top:38px;">
-      DRAM 企业占全国 <span class="hi">37.88%</span>——
-      广东 <span class="hi">不只有 AI 应用</span>，也建得起 AI 底座。
+  <!-- ===== AD SECTION ===== -->
+  <section class="ad-section">
+    <span class="ad-tag">DIKI · BRAIN · 数据底座</span>
+    <h2 class="ad-title">产业大脑　<span class="hi">AI 产业的数字底座</span></h2>
+    <p class="ad-sub">
+      以 AI 产业大脑为底座，为广东省 AI 产业提供 <b style="color:#fff;">底数摸盘、精准洞察和决策支撑</b>。
+    </p>
+
+    <div class="ad-grid">
+      <div class="ad-mod">
+        <div class="mh">产业概览</div>
+        <div class="ml">产业链 · 创新链 · 人才链 · 资金链</div>
+      </div>
+      <div class="ad-mod">
+        <div class="mh">产业图谱</div>
+        <div class="ml">产业链全景图 · 优劣势环节 · 上链企业清单 · 企业画像</div>
+      </div>
+      <div class="ad-mod">
+        <div class="mh">产业指数</div>
+        <div class="ml">产业集群竞争力指数 · 产业聚集 · 产业创新 · 产业成长 · 产业特色</div>
+      </div>
+      <div class="ad-mod">
+        <div class="mh">技术分析</div>
+        <div class="ml">全球专利分析 · 城市对标分析 · 科创企业 · 科研机构 · 研发人才</div>
+      </div>
+    </div>
+
+    <div class="ad-engine">
+      <div class="et">政府产业分析 <span class="hi">决策引擎</span></div>
+      <div class="es">精准产业定位、要素匹配和精细治理解决方案</div>
+    </div>
+
+    <div class="contact">
+      <div class="left">
+        <div class="lab">CONTACT · 联 系 方 式</div>
+        <div class="phone">185 8821 0558</div>
+        <div class="qr-tip">详情请咨询客服微信</div>
+      </div>
+      <div class="qr-box">
+        <img src="assets/wechat_qr.png" alt="客服微信二维码">
+        <div class="qrlab">扫码添加客服微信</div>
+      </div>
     </div>
   </section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="ftr">
-    <div class="row">
-      <div class="left">
-        <div class="src">DATA SOURCE</div>
-        <div class="src-text">
-          数据来源：<b>人工智能产业大脑</b>（brain.hitech-data.cn）<br>
-          数据日期：<b>2026 年 04 月</b>｜口径：广东省 vs 全国 / Top10 省份<br>
-          数据采集：<b>BRAIN.AI 数据档案</b> · 自动化抽取与人工复核
-        </div>
-      </div>
-      <div class="right">
-        <div class="doc">No. 001</div>
-        <div style="margin-top:10px;">广 东 / GUANGDONG</div>
-        <div style="margin-top:6px;">人工智能 / AI INDUSTRY</div>
-      </div>
-    </div>
-    <div class="end">
-      <span>BRAIN.AI · 广 东 AI 产 业 一 图 读 懂</span>
-      <span>2026 / APRIL · 一 图 流 · 数 据 真 实 可 追 溯</span>
-    </div>
-  </footer>
+  <div class="micro-foot" style="justify-content:center;">
+    <span>DIKI · BRAIN 产 业 大 脑</span>
+  </div>
 
 </div>
 </div>
