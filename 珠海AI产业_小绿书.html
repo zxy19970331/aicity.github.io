@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>珠海 AI 产业 · 小绿书 · 珠密芯嵌核</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* 纸基浅色背景 —— 暖宣纸 */
+    --paper:#F2F3EC;
+    --paper-2:#ECEFE5;
+    --card:#FCFCF7;
+    --card-tint:#EEF4EC;
+
+    /* 墨色 */
+    --ink:#13241C;
+    --ink-2:#394B41;
+    --ink-3:#6C7C72;
+    --ink-4:#A7B2A8;
+
+    /* 翠玉绿 —— 主色系 */
+    --jade-deep:#0A5C44;
+    --jade:#0E785A;
+    --jade-bright:#16A06E;
+    --jade-spring:#2FC089;
+    --mint:#86DBB2;
+    --mint-soft:#CDEBDB;
+
+    /* 黄铜金 —— 冠军 / NO.1 强调 */
+    --gold:#A9802F;
+    --gold-bright:#C7A152;
+    --gold-soft:#E7D6AC;
+
+    /* 线 */
+    --line:#D6DBCC;
+    --line-2:#C1C9B4;
+    --line-soft:#E4E8DA;
+
+    --ghost: rgba(10,92,68,.05);
+    --num-faint:#CCDCD0;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    background:#E4E7DD;font-family:'Noto Sans SC',sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  body{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0;}
+
+  /* ===================== 海报框 ===================== */
+  .poster{
+    width:1080px;height:1440px;
+    background:var(--paper);
+    position:relative;overflow:hidden;color:var(--ink);
+  }
+  .poster.alt{background:var(--paper-2);}
+
+  /* 细网格底纹 */
+  .grid-bg{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(10,92,68,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10,92,68,.035) 1px, transparent 1px);
+    background-size:54px 54px;
+  }
+  /* 颗粒/晕染氛围 */
+  .glow{
+    position:absolute;border-radius:50%;pointer-events:none;
+    filter:blur(80px);opacity:.5;
+  }
+  .glow.g1{width:520px;height:520px;top:-160px;right:-120px;
+    background:radial-gradient(circle,var(--mint) 0%,transparent 70%);}
+  .glow.g2{width:460px;height:460px;bottom:-150px;left:-140px;
+    background:radial-gradient(circle,rgba(47,192,137,.5) 0%,transparent 70%);}
+
+  /* ===================== 幽灵大字（章首字） ===================== */
+  .ghost{
+    position:absolute;font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:760px;line-height:.8;color:var(--ghost);
+    letter-spacing:-.04em;pointer-events:none;user-select:none;z-index:0;
+  }
+  .ghost.tr{top:-40px;right:-60px;}
+  .ghost.br{bottom:-120px;right:-40px;}
+
+  /* ===================== 品牌条 ===================== */
+  .brand-bar{
+    position:absolute;top:40px;left:64px;right:64px;z-index:6;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .brand-bar .left{display:flex;align-items:center;gap:13px;}
+  .logo-mark{
+    width:30px;height:30px;border-radius:8px;flex:none;position:relative;
+    background:linear-gradient(135deg,var(--jade-deep),var(--jade-bright));
+    box-shadow:0 4px 12px -3px rgba(10,92,68,.5);
+  }
+  .logo-mark::before{
+    content:'';position:absolute;inset:8px;border:2px solid #fff;border-radius:50%;
+    border-right-color:transparent;border-bottom-color:transparent;
+    transform:rotate(45deg);
+  }
+  .logo-mark::after{
+    content:'';position:absolute;width:6px;height:6px;border-radius:50%;
+    background:var(--mint);right:7px;bottom:7px;box-shadow:0 0 6px var(--mint);
+  }
+  .brand-bar .wm{font-family:'Space Mono',monospace;font-weight:700;font-size:15px;
+    letter-spacing:.12em;color:var(--ink);}
+  .brand-bar .pl{
+    font-family:'Noto Sans SC',sans-serif;font-weight:500;font-size:13px;
+    letter-spacing:.16em;color:var(--ink-3);padding-left:13px;
+    border-left:1px solid var(--line-2);
+  }
+  .brand-bar .right{font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;}
+
+  /* ===================== 刻度尺 ===================== */
+  .ruler{
+    position:absolute;left:64px;right:64px;height:8px;z-index:4;pointer-events:none;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .ruler.top{top:86px;}
+  .ruler.bot{bottom:80px;}
+  .ruler i{width:1px;height:5px;background:var(--line-2);display:block;}
+  .ruler i:nth-child(5n+1){height:9px;background:var(--line);}
+
+  /* ===================== 页脚 ===================== */
+  .foot{
+    position:absolute;bottom:36px;left:64px;right:64px;z-index:6;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    color:var(--ink-3);text-transform:uppercase;
+  }
+  .foot .lbl{display:flex;align-items:center;gap:10px;}
+  .foot .lbl .ch{font-family:'Noto Serif SC',serif;font-weight:700;font-size:15px;
+    color:var(--jade-deep);letter-spacing:.1em;}
+  .foot .pageno{display:flex;align-items:baseline;gap:7px;}
+  .foot .pageno .now{font-size:17px;color:var(--jade-deep);font-weight:700;}
+  .foot .pageno .sep{color:var(--ink-4);}
+  .foot .pageno .total{color:var(--ink-3);}
+
+  /* ===================== 印章 / 章首 ===================== */
+  .seal{
+    position:relative;flex:none;border-radius:14px;
+    background:linear-gradient(150deg,var(--jade-deep) 0%,var(--jade) 60%,var(--jade-bright) 100%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 16px 36px -16px rgba(10,92,68,.6), inset 0 0 0 1px rgba(255,255,255,.12);
+    color:#fff;font-family:'Noto Serif SC',serif;font-weight:900;
+  }
+  .seal::after{
+    content:'';position:absolute;inset:7px;border:1.5px solid rgba(255,255,255,.34);
+    border-radius:8px;pointer-events:none;
+  }
+
+  /* ===================== 章节抬头（P02+） ===================== */
+  .sec{position:absolute;top:142px;left:80px;right:80px;z-index:5;}
+  .sec .row{display:flex;align-items:flex-start;gap:24px;}
+  .sec .seal{width:104px;height:104px;font-size:62px;}
+  .sec .meta{flex:1;padding-top:4px;}
+  .sec .bignum{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:13px;
+    letter-spacing:.3em;color:var(--jade);text-transform:uppercase;
+  }
+  .sec .ttl{
+    margin-top:10px;font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:46px;line-height:1.26;color:var(--ink);letter-spacing:-.005em;
+  }
+  .sec .ttl .hi{
+    color:var(--jade-deep);
+    background:linear-gradient(180deg,transparent 62%,rgba(47,192,137,.32) 62%);
+    padding:0 4px;
+  }
+  .sec .sub{
+    margin-top:16px;font-size:17.5px;font-weight:400;color:var(--ink-2);line-height:1.65;
+    max-width:880px;
+  }
+
+  /* 小标题 */
+  .h3{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:17px;
+    color:var(--ink);display:flex;align-items:center;gap:10px;margin-bottom:13px;
+  }
+  .h3::before{content:'';width:4px;height:17px;border-radius:2px;
+    background:linear-gradient(180deg,var(--jade-deep),var(--jade-spring));}
+  .h3 .en{margin-left:auto;font-family:'Space Mono',monospace;font-weight:400;
+    font-size:10px;letter-spacing:.18em;color:var(--ink-4);text-transform:uppercase;}
+
+  /* NO.1 / 金牌徽标 */
+  .gold{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 11px;border-radius:6px;
+    background:linear-gradient(135deg,var(--gold) 0%,var(--gold-bright) 100%);
+    color:#fff;font-weight:800;font-size:12px;letter-spacing:.04em;
+    box-shadow:0 5px 13px -4px rgba(169,128,47,.6);
+  }
+  .gold .st{color:var(--gold-soft);}
+  .rank-chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:3px 9px;border-radius:5px;font-family:'Space Mono',monospace;
+    font-weight:700;font-size:11px;letter-spacing:.02em;
+    background:rgba(14,120,90,.1);color:var(--jade-deep);
+  }
+
+  /* =====================================================================
+     P01 · COVER · 珠
+     ===================================================================== */
+  .cover{position:absolute;inset:150px 80px 120px;display:flex;flex-direction:column;z-index:2;}
+  .cover .eyebrow{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;
+    color:var(--jade);text-transform:uppercase;}
+  .cover .eyebrow-cn{margin-top:13px;font-weight:500;font-size:17px;letter-spacing:.34em;
+    color:var(--ink-3);}
+  .cover .head{margin-top:40px;display:flex;align-items:flex-start;gap:30px;}
+  .cover .seal{width:158px;height:158px;font-size:96px;}
+  .cover h1{
+    font-family:'Noto Serif SC',serif;font-weight:900;font-size:92px;line-height:1.1;
+    color:var(--ink);letter-spacing:.01em;
+  }
+  .cover h1 .kick{display:block;font-size:30px;font-weight:600;letter-spacing:.16em;
+    color:var(--jade-deep);margin-bottom:14px;}
+  .cover h1 .hi{color:var(--jade-deep);position:relative;}
+  .cover h1 .hi::after{content:'';position:absolute;left:0;right:0;bottom:6px;height:10px;
+    background:linear-gradient(90deg,var(--jade-spring),var(--mint));opacity:.4;border-radius:4px;z-index:-1;}
+  .cover .sub{margin-top:34px;font-size:18px;line-height:1.7;color:var(--ink-2);max-width:840px;}
+  .cover .sub b{color:var(--jade-deep);font-weight:700;}
+
+  .anchors{margin-top:38px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .anchor{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 20px;position:relative;overflow:hidden;
+    box-shadow:0 12px 30px -22px rgba(10,92,68,.4);
+  }
+  .anchor::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--jade-deep),var(--jade-spring));}
+  .anchor .no{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    color:var(--jade);font-weight:700;}
+  .anchor .big{margin-top:8px;font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:52px;line-height:1;color:var(--ink);letter-spacing:-.02em;}
+  .anchor .big .u{font-family:'Noto Sans SC',sans-serif;font-size:18px;font-weight:700;
+    color:var(--ink-2);margin-left:5px;}
+  .anchor .big .arw{color:var(--jade-bright);font-size:34px;}
+  .anchor .lab{margin-top:9px;font-size:13.5px;color:var(--ink-2);font-weight:500;line-height:1.45;}
+  .anchor .runner{margin-top:8px;font-family:'Space Mono',monospace;font-size:10.5px;
+    letter-spacing:.04em;color:var(--ink-3);}
+
+  .punch{
+    margin-top:auto;border-radius:20px;padding:30px 34px;color:#fff;
+    background:linear-gradient(135deg,var(--jade-deep) 0%,var(--jade) 55%,var(--jade-bright) 100%);
+    box-shadow:0 26px 56px -24px rgba(10,92,68,.7);position:relative;overflow:hidden;
+  }
+  .punch::after{content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;
+    border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%);}
+  .punch .pl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.3em;
+    color:var(--mint);text-transform:uppercase;}
+  .punch .line{margin-top:16px;display:flex;align-items:flex-start;gap:16px;}
+  .punch .line + .line{margin-top:14px;}
+  .punch .line .k{font-family:'Noto Serif SC',serif;font-weight:900;font-size:23px;
+    color:#fff;white-space:nowrap;}
+  .punch .line .d{font-size:16px;line-height:1.5;color:rgba(255,255,255,.9);padding-top:5px;}
+  .punch .line .d em{color:var(--mint);font-style:normal;font-weight:700;}
+
+  /* =====================================================================
+     P02 · 密 · 雷达 + 结构
+     ===================================================================== */
+  .body{position:absolute;left:80px;right:80px;top:430px;bottom:118px;z-index:3;}
+  .body.mid{display:flex;flex-direction:column;justify-content:center;}
+
+  .p-dense .body{top:476px;}
+
+  .grid-2{display:grid;grid-template-columns:1.05fr 1fr;gap:26px;height:100%;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:24px 26px;box-shadow:0 14px 34px -26px rgba(10,92,68,.4);}
+
+  /* 雷达 */
+  .radar-wrap{display:flex;flex-direction:column;}
+  .radar-svg{width:100%;height:auto;display:block;margin:6px 0 2px;}
+  .radar-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;}
+  .radar-legend .it{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);}
+  .radar-legend .it .dim{font-weight:600;color:var(--ink);}
+  .radar-legend .it .sc{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--jade-deep);}
+  .radar-legend .it .rk{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-3);
+    background:var(--card-tint);padding:1px 6px;border-radius:4px;}
+
+  /* 三层结构竖条 */
+  .layers{display:flex;flex-direction:column;gap:14px;}
+  .layer{position:relative;border-radius:13px;padding:16px 18px;overflow:hidden;
+    border:1px solid var(--line);}
+  .layer .top{display:flex;align-items:baseline;justify-content:space-between;}
+  .layer .nm{font-weight:700;font-size:16px;color:var(--ink);}
+  .layer .nm small{font-family:'Space Mono',monospace;font-weight:400;font-size:10px;
+    color:var(--ink-3);margin-left:7px;letter-spacing:.1em;}
+  .layer .cnt{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:26px;
+    color:var(--jade-deep);}
+  .layer .cnt small{font-size:13px;color:var(--ink-2);font-weight:700;margin-left:3px;}
+  .layer .bar{margin-top:10px;height:8px;background:#E3E8DA;border-radius:6px;overflow:hidden;}
+  .layer .bar i{display:block;height:100%;border-radius:6px;
+    background:linear-gradient(90deg,var(--jade-deep),var(--jade-spring));}
+  .layer .pct{margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);}
+  .layer.app{background:linear-gradient(120deg,rgba(47,192,137,.1),rgba(134,219,178,.06));
+    border-color:var(--mint);}
+
+  /* 专利密度高亮条 */
+  .pat-band{margin-top:18px;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:24px;
+    box-shadow:0 14px 34px -26px rgba(10,92,68,.4);}
+  .pat-band .lead{flex:none;text-align:center;padding-right:24px;border-right:1px solid var(--line-soft);}
+  .pat-band .lead .v{font-family:'Noto Serif SC',serif;font-weight:900;font-size:56px;
+    line-height:1;color:var(--jade-deep);}
+  .pat-band .lead .l{margin-top:6px;font-size:12px;color:var(--ink-3);letter-spacing:.08em;}
+  .pat-band .mid{flex:1;display:flex;gap:14px;}
+  .pat-band .mid .seg{flex:1;}
+  .pat-band .mid .seg .k{font-size:12px;color:var(--ink-3);}
+  .pat-band .mid .seg .n{margin-top:4px;font-family:'JetBrains Mono',monospace;font-weight:800;
+    font-size:22px;color:var(--ink);}
+  .pat-band .note{flex:none;max-width:230px;font-size:13px;line-height:1.55;color:var(--ink-2);
+    padding-left:22px;border-left:1px solid var(--line-soft);}
+  .pat-band .note b{color:var(--gold);}
+
+  /* 指数双指标小卡（P02右下） */
+  .idx-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .idx{background:var(--card-tint);border:1px solid var(--line-soft);border-radius:13px;padding:15px 16px;}
+  .idx .k{font-size:12px;color:var(--ink-3);}
+  .idx .v{margin-top:5px;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;
+    color:var(--jade-deep);}
+  .idx .r{margin-top:5px;display:flex;gap:6px;}
+
+  /* =====================================================================
+     P03 · 密 · 梯度雁阵
+     ===================================================================== */
+  .geese{display:flex;flex-direction:column;gap:16px;height:100%;}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;position:relative;box-shadow:0 14px 34px -26px rgba(10,92,68,.4);}
+  .tier .thead{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .tier .badge{flex:none;width:54px;height:54px;border-radius:12px;display:flex;
+    flex-direction:column;align-items:center;justify-content:center;color:#fff;
+    font-family:'Noto Serif SC',serif;}
+  .tier .badge .n{font-weight:900;font-size:24px;line-height:1;}
+  .tier .badge .u{font-family:'Noto Sans SC',sans-serif;font-size:10px;font-weight:500;margin-top:1px;}
+  .tier.t1 .badge{background:linear-gradient(135deg,var(--gold),var(--gold-bright));}
+  .tier.t2 .badge{background:linear-gradient(135deg,var(--jade-deep),var(--jade));}
+  .tier.t3 .badge{background:linear-gradient(135deg,var(--jade),var(--jade-spring));}
+  .tier .tt{flex:1;}
+  .tier .tt .nm{font-family:'Noto Serif SC',serif;font-weight:900;font-size:21px;color:var(--ink);}
+  .tier .tt .ds{margin-top:3px;font-size:12.5px;color:var(--ink-3);}
+  .tier .tt .en{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;
+    color:var(--ink-4);text-transform:uppercase;}
+
+  .firms{display:flex;flex-wrap:wrap;gap:8px;}
+  .firm{background:var(--card-tint);border:1px solid var(--line-soft);border-radius:9px;
+    padding:8px 12px;display:flex;flex-direction:column;min-width:0;}
+  .firm .fn{font-weight:700;font-size:13.5px;color:var(--ink);white-space:nowrap;}
+  .firm .ft{margin-top:2px;font-size:11px;color:var(--jade);white-space:nowrap;}
+  .firm.list{border-color:rgba(169,128,47,.3);background:rgba(199,161,82,.08);}
+  .firm.uni{border-color:var(--mint);background:rgba(47,192,137,.07);}
+
+  .sp-split{display:flex;gap:10px;margin-top:6px;}
+  .sp-split .sp{flex:1;text-align:center;background:var(--card-tint);border-radius:10px;
+    padding:10px 6px;border:1px solid var(--line-soft);}
+  .sp-split .sp .v{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:22px;color:var(--jade-deep);}
+  .sp-split .sp .k{margin-top:2px;font-size:11px;color:var(--ink-3);}
+
+  /* =====================================================================
+     P04 · 芯 · 高地数据
+     ===================================================================== */
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:24px 26px;position:relative;overflow:hidden;box-shadow:0 14px 34px -26px rgba(10,92,68,.4);}
+  .scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--jade-deep),var(--jade-spring));}
+  .scard .k{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;
+    color:var(--ink-3);text-transform:uppercase;}
+  .scard .v{margin-top:7px;font-family:'Noto Serif SC',serif;font-weight:900;font-size:72px;
+    line-height:1;color:var(--ink);letter-spacing:-.02em;}
+  .scard .v .u{font-family:'Noto Sans SC',sans-serif;font-size:22px;font-weight:700;color:var(--ink-2);margin-left:5px;}
+  .scard .ranks{margin-top:12px;display:flex;gap:8px;}
+  .scard .split{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;}
+  .scard .split .s{background:var(--card-tint);border-radius:8px;padding:8px 12px;
+    border:1px solid var(--line-soft);}
+  .scard .split .s b{font-family:'JetBrains Mono',monospace;color:var(--jade-deep);font-size:15px;}
+  .scard .split .s small{color:var(--ink-3);font-size:11px;margin-left:4px;}
+
+  .density-band{margin-top:18px;border-radius:18px;padding:24px 30px;color:#fff;
+    background:linear-gradient(120deg,var(--jade-deep),var(--jade) 70%);
+    display:flex;align-items:center;gap:30px;box-shadow:0 22px 50px -26px rgba(10,92,68,.7);
+    position:relative;overflow:hidden;}
+  .density-band::after{content:'';position:absolute;right:-30px;bottom:-50px;width:240px;height:240px;
+    border-radius:50%;background:radial-gradient(circle,rgba(134,219,178,.25),transparent 70%);}
+  .density-band .huge{font-family:'Noto Serif SC',serif;font-weight:900;font-size:30px;line-height:1.3;flex:none;}
+  .density-band .huge em{font-style:normal;color:var(--mint);font-size:54px;}
+  .density-band .txt{font-size:15px;line-height:1.6;color:rgba(255,255,255,.92);
+    border-left:1px solid rgba(255,255,255,.25);padding-left:28px;}
+
+  .top3{margin-top:18px;}
+  .top3 .rows{display:flex;gap:12px;}
+  .top3 .r{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;display:flex;align-items:center;gap:14px;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);}
+  .top3 .r .rk{font-family:'Noto Serif SC',serif;font-weight:900;font-size:30px;
+    color:var(--num-faint);line-height:1;flex:none;}
+  .top3 .r.first .rk{color:var(--gold-bright);}
+  .top3 .r .nm{font-weight:700;font-size:16px;color:var(--ink);}
+  .top3 .r .pv{margin-top:2px;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:20px;color:var(--jade-deep);}
+  .top3 .r .pv small{font-size:11px;color:var(--ink-3);font-weight:400;margin-left:3px;}
+
+  /* 资本信号 strip */
+  .cap-strip{margin-top:16px;}
+  .cap-rows{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .cap{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);position:relative;}
+  .cap .fn{font-weight:700;font-size:15px;color:var(--ink);}
+  .cap .ds{margin-top:4px;font-size:11.5px;color:var(--jade);line-height:1.4;min-height:32px;}
+  .cap .rd{margin-top:8px;display:flex;align-items:baseline;justify-content:space-between;
+    padding-top:8px;border-top:1px dashed var(--line);}
+  .cap .rd .round{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.04em;}
+  .cap .rd .amt{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:14px;color:var(--gold);}
+
+  /* =====================================================================
+     P05 · 芯 · 7 张冠军卡
+     ===================================================================== */
+  .chip-section{margin-bottom:16px;}
+  .chip-gh{display:flex;align-items:center;gap:13px;margin-bottom:12px;}
+  .chip-gh .nm{font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:16px;
+    color:var(--jade-deep);letter-spacing:.12em;}
+  .chip-gh .ln{flex:1;height:1px;background:var(--line);}
+  .chip-gh .en{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;
+    color:var(--ink-4);text-transform:uppercase;}
+  .champ-row{display:grid;gap:12px;}
+  .champ-row.c3{grid-template-columns:repeat(3,1fr);}
+  .champ-row.c2{grid-template-columns:repeat(2,1fr);}
+  .champ{background:var(--card);border:1px solid var(--line);border-radius:15px;
+    padding:16px 18px;position:relative;overflow:hidden;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);}
+  .champ .hd{display:flex;align-items:center;gap:12px;}
+  .champ .seal{width:48px;height:48px;font-size:28px;border-radius:11px;}
+  .champ .role{flex:1;}
+  .champ .role .fn{font-weight:700;font-size:14px;color:var(--jade);letter-spacing:.04em;}
+  .champ .role .rl{margin-top:2px;font-family:'Noto Serif SC',serif;font-weight:700;
+    font-size:16px;color:var(--ink);line-height:1.25;}
+  .champ .firms2{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
+  .champ .f2{padding:9px 12px;border-radius:9px;background:var(--card-tint);
+    border:1px solid var(--line-soft);}
+  .champ .f2 .n{font-weight:700;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .champ .f2 .n .tg{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+    padding:1px 6px;border-radius:4px;letter-spacing:.02em;}
+  .champ .f2 .n .tg.win{background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:#fff;}
+  .champ .f2 .n .tg.ipo{background:rgba(14,120,90,.14);color:var(--jade-deep);}
+  .champ .f2 .p{margin-top:3px;font-size:11px;color:var(--ink-3);line-height:1.4;}
+
+  /* =====================================================================
+     P06-07 · 嵌 · 应用层
+     ===================================================================== */
+  .app-head{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+  .app-head .ah{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 24px;display:flex;align-items:center;gap:20px;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);position:relative;overflow:hidden;}
+  .app-head .ah::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--jade-deep),var(--jade-spring));}
+  .app-head .ah .v{font-family:'Noto Serif SC',serif;font-weight:900;font-size:58px;line-height:1;color:var(--jade-deep);}
+  .app-head .ah .v .pct{font-size:24px;color:var(--jade-bright);}
+  .app-head .ah .d .k{font-size:13px;color:var(--ink-3);}
+  .app-head .ah .d .l{margin-top:4px;font-weight:700;font-size:15px;color:var(--ink);}
+
+  .seg{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;
+    margin-bottom:14px;box-shadow:0 12px 30px -24px rgba(10,92,68,.4);position:relative;}
+  .seg .sh{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .seg .sh .ic{width:40px;height:40px;border-radius:10px;flex:none;display:flex;
+    align-items:center;justify-content:center;color:#fff;font-family:'Noto Serif SC',serif;
+    font-weight:900;font-size:20px;
+    background:linear-gradient(135deg,var(--jade-deep),var(--jade-bright));}
+  .seg .sh .nm{font-family:'Noto Serif SC',serif;font-weight:900;font-size:19px;color:var(--ink);}
+  .seg .sh .ct{margin-left:auto;display:flex;align-items:baseline;gap:5px;}
+  .seg .sh .ct .n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:24px;color:var(--jade-deep);}
+  .seg .sh .ct .u{font-size:12px;color:var(--ink-3);}
+  .seg .sh .tag{margin-left:auto;font-size:12px;color:var(--jade);font-weight:600;
+    background:rgba(47,192,137,.1);padding:4px 11px;border-radius:20px;}
+  .seg .items{display:flex;flex-direction:column;gap:9px;}
+  .seg .it{display:flex;gap:12px;align-items:baseline;}
+  .seg .it .co{flex:none;min-width:118px;font-weight:700;font-size:14px;color:var(--jade-deep);}
+  .seg .it .co .star{color:var(--gold-bright);font-size:11px;margin-left:3px;}
+  .seg .it .ds{font-size:13.5px;color:var(--ink-2);line-height:1.5;}
+  .seg .it .ds b{color:var(--ink);font-weight:600;}
+
+  /* =====================================================================
+     P08-09 · 核 · 区域
+     ===================================================================== */
+  .xz-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+  .xm{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);}
+  .xm .k{font-size:12px;color:var(--ink-3);}
+  .xm .v{margin-top:6px;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;color:var(--jade-deep);}
+  .xm .v .u{font-family:'Noto Sans SC',sans-serif;font-size:13px;color:var(--ink-2);font-weight:700;margin-left:3px;}
+  .xm .share{margin-top:6px;font-size:12px;color:var(--gold);font-weight:700;}
+  .xm .rk{margin-top:6px;}
+
+  .scene{background:linear-gradient(120deg,var(--jade-deep),var(--jade) 75%);color:#fff;
+    border-radius:18px;padding:24px 28px;box-shadow:0 22px 50px -26px rgba(10,92,68,.7);
+    position:relative;overflow:hidden;}
+  .scene::after{content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;
+    border-radius:50%;background:radial-gradient(circle,rgba(134,219,178,.22),transparent 70%);}
+  .scene .st{font-family:'Noto Serif SC',serif;font-weight:900;font-size:22px;margin-bottom:16px;}
+  .scene .pts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .scene .pt{position:relative;padding-left:16px;}
+  .scene .pt::before{content:'';position:absolute;left:0;top:5px;width:6px;height:6px;border-radius:50%;
+    background:var(--mint);box-shadow:0 0 8px var(--mint);}
+  .scene .pt .h{font-weight:700;font-size:15px;color:var(--mint);}
+  .scene .pt .b{margin-top:6px;font-size:13px;line-height:1.55;color:rgba(255,255,255,.9);}
+  .scene .pt .b b{color:#fff;}
+
+  /* 具身链条 */
+  .chain{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 26px;
+    box-shadow:0 14px 34px -26px rgba(10,92,68,.4);}
+  .chain .crow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft);}
+  .chain .crow:last-child{border-bottom:0;}
+  .chain .crow .part{flex:none;width:150px;font-family:'Noto Serif SC',serif;font-weight:700;
+    font-size:16px;color:var(--jade-deep);}
+  .chain .crow .co{flex:none;width:150px;font-weight:700;font-size:14px;color:var(--ink);}
+  .chain .crow .ds{font-size:13px;color:var(--ink-2);line-height:1.4;}
+
+  .qin-cols{display:flex;flex-direction:column;gap:14px;}
+  .qcol{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;
+    box-shadow:0 12px 30px -24px rgba(10,92,68,.4);}
+  .qcol .qh{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+  .qcol .qh .nu{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:var(--jade);
+    background:rgba(14,120,90,.1);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .qcol .qh .nm{font-family:'Noto Serif SC',serif;font-weight:900;font-size:18px;color:var(--ink);}
+  .qcol .items{display:flex;flex-direction:column;gap:8px;}
+  .qcol .it{display:flex;gap:12px;align-items:baseline;}
+  .qcol .it .co{flex:none;min-width:140px;font-weight:700;font-size:14px;color:var(--jade-deep);}
+  .qcol .it .ds{font-size:13px;color:var(--ink-2);line-height:1.5;}
+  .qcol .it .ds b{color:var(--ink);font-weight:600;}
+
+  /* =====================================================================
+     P10 · 收尾（深玉色）
+     ===================================================================== */
+  .poster.closing{background:linear-gradient(160deg,#072b21 0%,#0a4534 50%,#06251c 100%);color:#fff;}
+  .closing .grid-bg{background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);}
+  .closing .glow.g1{background:radial-gradient(circle,rgba(47,192,137,.4),transparent 70%);}
+  .closing .glow.g2{background:radial-gradient(circle,rgba(134,219,178,.3),transparent 70%);}
+  .closing .brand-bar .wm{color:#fff;}
+  .closing .brand-bar .pl{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2);}
+  .closing .brand-bar .right{color:rgba(255,255,255,.6);}
+  .closing .ruler i{background:rgba(255,255,255,.16);}
+  .closing .ruler i:nth-child(5n+1){background:rgba(255,255,255,.34);}
+  .closing .foot{color:rgba(255,255,255,.5);}
+  .closing .foot .lbl .ch{color:var(--mint);}
+  .closing .foot .pageno .now{color:var(--mint);}
+  .closing .foot .pageno .total{color:rgba(255,255,255,.6);}
+  .closing .ghost{color:rgba(255,255,255,.04);}
+
+  .clo{position:absolute;inset:158px 80px 116px;display:flex;flex-direction:column;z-index:3;}
+  .clo .eyebrow{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.32em;
+    color:var(--mint);text-transform:uppercase;}
+  .clo h2{margin-top:16px;font-family:'Noto Serif SC',serif;font-weight:900;font-size:66px;line-height:1.18;}
+  .clo h2 .hi{color:var(--mint);}
+  .clo .sub{margin-top:24px;font-size:17.5px;line-height:1.75;color:rgba(255,255,255,.85);max-width:800px;}
+  .clo .sub b{color:#fff;}
+  .clo .modules{margin-top:34px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .clo .mod{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;padding:20px 22px;}
+  .clo .mod .mh{font-family:'Noto Serif SC',serif;font-weight:700;font-size:22px;color:#fff;
+    display:flex;align-items:center;gap:10px;}
+  .clo .mod .mh::before{content:'';width:8px;height:8px;border-radius:2px;
+    background:var(--jade-spring);transform:rotate(45deg);}
+  .clo .mod .ml{margin-top:9px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;}
+  .clo .contact{margin-top:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;padding:26px 30px;display:flex;justify-content:space-between;align-items:center;gap:24px;}
+  .clo .contact .lt .lb{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.28em;
+    color:var(--mint);text-transform:uppercase;}
+  .clo .contact .lt .ph{margin-top:8px;font-family:'JetBrains Mono',monospace;font-weight:700;
+    font-size:32px;color:#fff;letter-spacing:.03em;}
+  .clo .contact .lt .tip{margin-top:6px;font-size:13px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:8px;}
+  .clo .contact .lt .tip::before{content:'→';color:var(--mint);}
+  .clo .contact .qr{flex:none;width:140px;}
+  .clo .contact .qr .ph-qr{width:140px;height:140px;background:#fff;border-radius:12px;padding:12px;
+    box-shadow:0 10px 28px rgba(47,192,137,.3);}
+  .clo .contact .qr .ph-qr .grid{width:100%;height:100%;border-radius:3px;position:relative;
+    background-color:#fff;
+    background-image:
+      linear-gradient(45deg,#0a4534 25%,transparent 25%,transparent 75%,#0a4534 75%),
+      linear-gradient(45deg,#0a4534 25%,transparent 25%,transparent 75%,#0a4534 75%);
+    background-size:11px 11px;background-position:0 0,5.5px 5.5px;}
+  .clo .contact .qr .ph-qr .fp{position:absolute;width:30px;height:30px;background:#fff;
+    border:6px solid #0a4534;border-radius:5px;}
+  .clo .contact .qr .ph-qr .fp.tl{top:8px;left:8px;}
+  .clo .contact .qr .ph-qr .fp.tr{top:8px;right:8px;}
+  .clo .contact .qr .ph-qr .fp.bl{bottom:8px;left:8px;}
+  .clo .contact .qr .lab{margin-top:8px;text-align:center;font-size:11px;color:rgba(255,255,255,.65);}
+
+  /* 角标 */
+  .corner{position:absolute;width:64px;height:64px;border:2px solid var(--jade-deep);pointer-events:none;z-index:4;}
+  .corner.tl{top:108px;left:64px;border-right:0;border-bottom:0;}
+  .corner.br{bottom:104px;right:64px;border-left:0;border-top:0;}
+  .closing .corner{border-color:var(--mint);}
+</style>
+</head>
+<body>
+
+<!-- ===================================================================
+     P01 · COVER · 珠
+     =================================================================== -->
+<div class="poster" id="p01">
+  <div class="grid-bg"></div><div class="glow g1"></div><div class="glow g2"></div>
+  <div class="ghost br">珠</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">ZHUHAI · AI · 2026</div>
+  </div>
+  <div class="ruler top"></div>
+  <div class="corner tl"></div><div class="corner br"></div>
+
+  <div class="cover">
+    <div class="eyebrow">ZHUHAI · AI INDUSTRY PANORAMA</div>
+    <div class="eyebrow-cn">数 说 系 列 ／ 珠 海 AI 产 业 全 景</div>
+
+    <div class="head">
+      <div class="seal">珠</div>
+      <h1>
+        <span class="kick">珠 海 AI</span>
+        小城密芯<br><span class="hi">应用先行</span>
+      </h1>
+    </div>
+
+    <div class="sub">
+      以 <b>端侧 AI 芯片</b> 为硬底座、以 <b>城市级场景</b> 为试验场——走出一条
+      「小而尖、软硬协同、应用牵引」的珠海 AI 路径。
+    </div>
+
+    <div class="anchors">
+      <div class="anchor">
+        <div class="no">01 · 综合实力</div>
+        <div class="big">55.51</div>
+        <div class="lab">综合竞争力指数<br>集聚 62.38</div>
+        <div class="runner">竞争力 全国19/粤3 · 集聚 全国12/粤3</div>
+      </div>
+      <div class="anchor">
+        <div class="no">02 · 企业密度</div>
+        <div class="big">275<span class="u">家</span></div>
+        <div class="lab">AI 企业总数</div>
+        <div class="runner">广东第 3 · 全国第 21</div>
+      </div>
+      <div class="anchor">
+        <div class="no">03 · 芯片密度</div>
+        <div class="big">8<span class="u">%</span><span class="arw"> → </span>23<span class="u">%</span></div>
+        <div class="lab">核心芯片企业占比<br>贡献全市 AI 专利</div>
+        <div class="runner">以小博大 · 专利密度全链最高</div>
+      </div>
+    </div>
+
+    <div class="punch">
+      <div class="pl">KEY MESSAGE · 珠海 AI 的两根杠杆</div>
+      <div class="line"><span class="k">端侧 AI 芯片</span>
+        <span class="d">珠海最具辨识度的 <em>AI 标签</em>——以高密度 IC 设计卡位 AI 硬件底座。</span></div>
+      <div class="line"><span class="k">应用 场景</span>
+        <span class="d">放大 AI 产业价值的 <em>关键杠杆</em>——城市全域，皆是试验场。</span></div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">珠</span> ZHUHAI · 小城密芯 应用先行</span>
+    <span class="pageno"><span class="now">01</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P02 · 密 · 五维雷达 + 三层结构  (02 · 1/2)
+     =================================================================== -->
+<div class="poster alt p-dense" id="p02">
+  <div class="grid-bg"></div><div class="glow g1"></div>
+  <div class="ghost tr">密</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 02 · DENSITY</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">密</div>
+      <div class="meta">
+        <div class="bignum">02 · 小而尖的梯队密度</div>
+        <div class="ttl">龙头压阵、腰部成势、<span class="hi">专精特新成林</span></div>
+        <div class="sub">275 家 AI 企业，广东第 3 / 全国第 21——上市龙头牵引方向、独角兽打开增量、专精特新补齐细分链条，形成高浓度 AI 企业群。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="grid-2">
+      <!-- 左：五维雷达 -->
+      <div class="panel radar-wrap">
+        <div class="h3">珠海 AI 产业竞争力 · 五维雷达<span class="en">5-DIM RADAR</span></div>
+        <svg class="radar-svg" viewBox="0 0 400 410" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#16A06E" stop-opacity="0.42"/>
+              <stop offset="1" stop-color="#0A5C44" stop-opacity="0.30"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(200,205)">
+            <!-- grid pentagons (0.2..1.0) -->
+            <polygon points="0,-30 28.53,-9.27 17.63,24.27 -17.63,24.27 -28.53,-9.27" fill="none" stroke="#C1C9B4" stroke-width="1"/>
+            <polygon points="0,-60 57.07,-18.54 35.27,48.54 -35.27,48.54 -57.07,-18.54" fill="none" stroke="#C1C9B4" stroke-width="1"/>
+            <polygon points="0,-90 85.60,-27.81 52.90,72.81 -52.90,72.81 -85.60,-27.81" fill="none" stroke="#C1C9B4" stroke-width="1"/>
+            <polygon points="0,-120 114.13,-37.08 70.53,97.08 -70.53,97.08 -114.13,-37.08" fill="none" stroke="#C1C9B4" stroke-width="1"/>
+            <polygon points="0,-150 142.66,-46.35 88.17,121.35 -88.17,121.35 -142.66,-46.35" fill="none" stroke="#A7B2A8" stroke-width="1.4"/>
+            <!-- axes -->
+            <line x1="0" y1="0" x2="0" y2="-150" stroke="#D6DBCC" stroke-width="1"/>
+            <line x1="0" y1="0" x2="142.66" y2="-46.35" stroke="#D6DBCC" stroke-width="1"/>
+            <line x1="0" y1="0" x2="88.17" y2="121.35" stroke="#D6DBCC" stroke-width="1"/>
+            <line x1="0" y1="0" x2="-88.17" y2="121.35" stroke="#D6DBCC" stroke-width="1"/>
+            <line x1="0" y1="0" x2="-142.66" y2="-46.35" stroke="#D6DBCC" stroke-width="1"/>
+            <!-- data polygon (max axis = 70) -->
+            <polygon points="0,-118.95 127.13,-41.31 73.32,100.92 -67.40,92.79 -97.71,-31.75"
+              fill="url(#radarFill)" stroke="#0A5C44" stroke-width="2.4" stroke-linejoin="round"/>
+            <!-- data vertices -->
+            <circle cx="0" cy="-118.95" r="4.6" fill="#0A5C44"/>
+            <circle cx="127.13" cy="-41.31" r="4.6" fill="#0A5C44"/>
+            <circle cx="73.32" cy="100.92" r="4.6" fill="#0A5C44"/>
+            <circle cx="-67.40" cy="92.79" r="4.6" fill="#0A5C44"/>
+            <circle cx="-97.71" cy="-31.75" r="4.6" fill="#0A5C44"/>
+            <!-- value labels -->
+            <text x="0" y="-130" text-anchor="middle" font-family="JetBrains Mono" font-size="15" font-weight="800" fill="#0A5C44">55.51</text>
+            <text x="140" y="-46" text-anchor="middle" font-family="JetBrains Mono" font-size="15" font-weight="800" fill="#0A5C44">62.38</text>
+            <text x="86" y="118" text-anchor="middle" font-family="JetBrains Mono" font-size="15" font-weight="800" fill="#0A5C44">58.21</text>
+            <text x="-80" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="15" font-weight="800" fill="#0A5C44">53.51</text>
+            <text x="-110" y="-32" text-anchor="middle" font-family="JetBrains Mono" font-size="15" font-weight="800" fill="#0A5C44">47.94</text>
+            <!-- axis names -->
+            <text x="0" y="-162" text-anchor="middle" font-family="Noto Sans SC" font-size="15" font-weight="700" fill="#13241C">综合竞争力</text>
+            <text x="158" y="-52" text-anchor="start" font-family="Noto Sans SC" font-size="15" font-weight="700" fill="#13241C">产业集聚</text>
+            <text x="92" y="142" text-anchor="start" font-family="Noto Sans SC" font-size="15" font-weight="700" fill="#13241C">产业创新</text>
+            <text x="-92" y="142" text-anchor="end" font-family="Noto Sans SC" font-size="15" font-weight="700" fill="#13241C">产业成长</text>
+            <text x="-158" y="-52" text-anchor="end" font-family="Noto Sans SC" font-size="15" font-weight="700" fill="#13241C">产业特色</text>
+          </g>
+        </svg>
+        <div class="radar-legend">
+          <div class="it"><span class="dim">综合</span><span class="sc">55.51</span><span class="rk">全国19</span></div>
+          <div class="it"><span class="dim">集聚</span><span class="sc">62.38</span><span class="rk">全国12</span></div>
+          <div class="it"><span class="dim">创新</span><span class="sc">58.21</span><span class="rk">全国19</span></div>
+          <div class="it"><span class="dim">成长</span><span class="sc">53.51</span><span class="rk">全国17</span></div>
+          <div class="it"><span class="dim">特色</span><span class="sc">47.94</span><span class="rk">全国14</span></div>
+        </div>
+      </div>
+
+      <!-- 右：三层结构 + 指数 -->
+      <div style="display:flex;flex-direction:column;">
+        <div class="h3">275 家 · 三层结构<span class="en">3-LAYER STRUCTURE</span></div>
+        <div class="layers">
+          <div class="layer">
+            <div class="top"><div class="nm">基础层 <small>BASE</small></div>
+              <div class="cnt">50<small>家</small></div></div>
+            <div class="bar"><i style="width:16.5%"></i></div>
+            <div class="pct">占比 16.50% · 50 / 275</div>
+          </div>
+          <div class="layer">
+            <div class="top"><div class="nm">技术层 <small>TECH</small></div>
+              <div class="cnt">53<small>家</small></div></div>
+            <div class="bar"><i style="width:17.49%"></i></div>
+            <div class="pct">占比 17.49% · 53 / 275</div>
+          </div>
+          <div class="layer app">
+            <div class="top"><div class="nm">应用层 <small>APPLICATION</small></div>
+              <div class="cnt">200<small>家</small></div></div>
+            <div class="bar"><i style="width:66.01%"></i></div>
+            <div class="pct">占比 66.01% · 200 / 275 —— 应用牵引型结构</div>
+          </div>
+        </div>
+
+        <div class="h3" style="margin-top:20px;">两项核心指数 · 广东第 3<span class="en">INDEX</span></div>
+        <div class="idx-2">
+          <div class="idx"><div class="k">AI 竞争力指数</div><div class="v">55.51</div>
+            <div class="r"><span class="rank-chip">全国 19</span><span class="rank-chip">广东 3</span></div></div>
+          <div class="idx"><div class="k">产业集聚指数</div><div class="v">62.38</div>
+            <div class="r"><span class="rank-chip">全国 12</span><span class="rank-chip">广东 3</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 专利密度条 -->
+    <div class="pat-band">
+      <div class="lead"><div class="v">213</div><div class="l">AI 专利总量（件）</div></div>
+      <div class="mid">
+        <div class="seg"><div class="k">基础层</div><div class="n">52</div></div>
+        <div class="seg"><div class="k">技术层</div><div class="n">26</div></div>
+        <div class="seg"><div class="k">应用层</div><div class="n">133</div></div>
+      </div>
+      <div class="note">基础层仅 <b>50 家</b>（占 16.5%），却贡献约 <b>24.41%</b> 专利——三层中<b>专利密度最高</b>。</div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">密</span> DENSITY · 梯队密度</span>
+    <span class="pageno"><span class="now">02</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P03 · 密 · 梯度雁阵  (02 · 2/2)
+     =================================================================== -->
+<div class="poster" id="p03">
+  <div class="grid-bg"></div><div class="glow g2"></div>
+  <div class="ghost tr">密</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 02 · ECHELON</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">密</div>
+      <div class="meta">
+        <div class="bignum">02 · 梯度雁阵图</div>
+        <div class="ttl">14 龙头领飞 · 6 独角兽提速 · <span class="hi">115 专精特新成林</span></div>
+        <div class="sub">从上市龙头到潜在独角兽，再到专精特新——三级梯队层层咬合，撑起珠海高浓度 AI 企业群。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body" style="top:452px;">
+    <div class="geese">
+      <!-- 第一梯队：上市龙头 -->
+      <div class="tier t1">
+        <div class="thead">
+          <div class="badge"><span class="n">14</span><span class="u">家</span></div>
+          <div class="tt"><div class="nm">上市龙头 · 领飞</div>
+            <div class="ds">14 家上市企业牵引方向 · 端侧芯片 / 家电制造 / 办公医药 / 数据中心</div>
+            <div class="en">LISTED LEADERS</div></div>
+        </div>
+        <div class="firms">
+          <div class="firm list"><span class="fn">全志科技</span><span class="ft">端侧 AI SoC</span></div>
+          <div class="firm list"><span class="fn">炬芯科技</span><span class="ft">AI 音频 SoC</span></div>
+          <div class="firm list"><span class="fn">格力电器</span><span class="ft">AI+家电/制造</span></div>
+          <div class="firm list"><span class="fn">金山办公</span><span class="ft">AI+办公</span></div>
+          <div class="firm list"><span class="fn">远光软件</span><span class="ft">AI+企业管理</span></div>
+          <div class="firm list"><span class="fn">丽珠集团</span><span class="ft">AI+医药研发</span></div>
+          <div class="firm list"><span class="fn">光库科技</span><span class="ft">AI 光互联</span></div>
+          <div class="firm list"><span class="fn">宝莱特</span><span class="ft">AI+智慧医疗</span></div>
+          <div class="firm list"><span class="fn">汇金科技</span><span class="ft">AI+金融</span></div>
+          <div class="firm list"><span class="fn">奔图科技</span><span class="ft">AI 打印一体机</span></div>
+          <div class="firm list"><span class="fn">航宇微</span><span class="ft">空天 AI 芯片</span></div>
+          <div class="firm list"><span class="fn">纳睿雷达</span><span class="ft">AI+雷达感知</span></div>
+          <div class="firm list"><span class="fn">高凌信息</span><span class="ft">AI+网络安全</span></div>
+          <div class="firm list"><span class="fn">派诺科技</span><span class="ft">AI+能源</span></div>
+        </div>
+      </div>
+
+      <!-- 第二梯队：独角兽 -->
+      <div class="tier t2">
+        <div class="thead">
+          <div class="badge"><span class="n">6</span><span class="u">家</span></div>
+          <div class="tt"><div class="nm">独角兽 / 潜在独角兽 · 提速</div>
+            <div class="ds">打开增量空间 · 工业MCU / DPU / 数字员工 / 具身智能 / 多模态大模型 / 语音交互</div>
+            <div class="en">UNICORNS</div></div>
+        </div>
+        <div class="firms">
+          <div class="firm uni"><span class="fn">极海微电子</span><span class="ft">工业/车规 MCU</span></div>
+          <div class="firm uni"><span class="fn">星云智联</span><span class="ft">数据中心 DPU</span></div>
+          <div class="firm uni"><span class="fn">金智维</span><span class="ft">AI 数字员工</span></div>
+          <div class="firm uni"><span class="fn">智元机器人</span><span class="ft">具身智能机器人</span></div>
+          <div class="firm uni"><span class="fn">无界方舟</span><span class="ft">多模态大模型</span></div>
+          <div class="firm uni"><span class="fn">普强信息</span><span class="ft">AI 语音交互</span></div>
+        </div>
+      </div>
+
+      <!-- 第三梯队：专精特新 -->
+      <div class="tier t3">
+        <div class="thead">
+          <div class="badge"><span class="n">115</span><span class="u">家</span></div>
+          <div class="tt"><div class="nm">专精特新 · 成林</div>
+            <div class="ds">补齐细分链条 · 覆盖 AI 芯片、智能传感器、工业软件、智能机器人等赛道</div>
+            <div class="en">SPECIALIZED · "LITTLE GIANTS"</div></div>
+        </div>
+        <div class="sp-split">
+          <div class="sp"><div class="v">71</div><div class="k">应用层</div></div>
+          <div class="sp"><div class="v">25</div><div class="k">技术层</div></div>
+          <div class="sp"><div class="v">23</div><div class="k">基础层</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">密</span> ECHELON · 梯度雁阵</span>
+    <span class="pageno"><span class="now">03</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P04 · 芯 · 高地数据 + 资本信号  (03 · 1/2)
+     =================================================================== -->
+<div class="poster alt p-dense" id="p04">
+  <div class="grid-bg"></div><div class="glow g1"></div>
+  <div class="ghost tr">芯</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 03 · CORE CHIP</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">芯</div>
+      <div class="meta">
+        <div class="bignum">03 · AI「芯」高地</div>
+        <div class="ttl">珠海 AI 的起手式，是 <span class="hi">端侧 AI 芯片</span></div>
+        <div class="sub">数量是入场券，密度是护城河——核心芯片企业仅占 8%，却贡献 23% 专利，靠高密度 IC 设计卡位 AI 硬件底座。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="stat-grid">
+      <div class="scard">
+        <div class="k">核心芯片企业</div>
+        <div class="v">22<span class="u">家</span></div>
+        <div class="ranks"><span class="rank-chip">全国 11</span><span class="rank-chip">广东 3</span>
+          <span class="gold"><span class="st">★</span>15 家专精特新/国高 · 68.2%</span></div>
+        <div class="split">
+          <div class="s"><b>5</b><small>CPU</small></div>
+          <div class="s"><b>4</b><small>GPU</small></div>
+          <div class="s"><b>7</b><small>NPU</small></div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="k">核心芯片专利</div>
+        <div class="v">49<span class="u">件</span></div>
+        <div class="ranks"><span class="rank-chip">全国 11</span><span class="rank-chip">广东 3</span></div>
+        <div class="split">
+          <div class="s"><b>20</b><small>GPU</small></div>
+          <div class="s"><b>4</b><small>NPU</small></div>
+          <div class="s"><b>专利密度</b><small>全链最高</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="density-band">
+      <div class="huge"><em>8%</em> 企业<br>贡献 <em>23%</em> 专利</div>
+      <div class="txt">珠海「芯」事——小企业群扛起大专利。核心芯片企业数量仅占全市 AI 企业 8%，却贡献了约 23% 的 AI 专利，是全链条中<strong style="color:var(--mint)">专利密度最高</strong>的环节。</div>
+    </div>
+
+    <div class="top3">
+      <div class="h3">芯片专利 TOP 3<span class="en">PATENT LEADERS</span></div>
+      <div class="rows">
+        <div class="r first"><div class="rk">1</div><div><div class="nm">芯动力</div><div class="pv">18<small>件</small></div></div></div>
+        <div class="r"><div class="rk">2</div><div><div class="nm">星云智联</div><div class="pv">14<small>件</small></div></div></div>
+        <div class="r"><div class="rk">3</div><div><div class="nm">中科芯磁</div><div class="pv">4<small>件</small></div></div></div>
+      </div>
+    </div>
+
+    <div class="cap-strip">
+      <div class="h3">资本信号 · 近 12 个月回流上游硬件底座<span class="en">4 FINANCING DEALS</span></div>
+      <div class="cap-rows">
+        <div class="cap"><div class="fn">跃昉科技</div><div class="ds">RISC-V CPU</div>
+          <div class="rd"><span class="round">B 轮</span><span class="amt">超 2 亿元</span></div></div>
+        <div class="cap"><div class="fn">芯动力</div><div class="ds">RPP 架构 GPGPU</div>
+          <div class="rd"><span class="round">战略投资</span><span class="amt">—</span></div></div>
+        <div class="cap"><div class="fn">中科芯磁</div><div class="ds">FPGA / 可编程异构</div>
+          <div class="rd"><span class="round">战略投资</span><span class="amt">—</span></div></div>
+        <div class="cap"><div class="fn">量引科技</div><div class="ds">数据中心硅光芯片</div>
+          <div class="rd"><span class="round">天使轮</span><span class="amt">5000 万级</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">芯</span> CORE CHIP · 端侧芯片高地</span>
+    <span class="pageno"><span class="now">04</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P05 · 芯 · 7 张冠军卡  (03 · 2/2)
+     =================================================================== -->
+<div class="poster" id="p05">
+  <div class="grid-bg"></div><div class="glow g2"></div>
+  <div class="ghost br">芯</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 03 · CHAMPIONS</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">芯</div>
+      <div class="meta">
+        <div class="bignum">03 · 造「芯」黑马 · 7 张冠军卡</div>
+        <div class="ttl">从 <span class="hi">听看走</span> 到 <span class="hi">记控算电</span>——拼出 AI 芯片底座</div>
+        <div class="sub">端侧 AI SoC 矩阵 + 端侧配套芯片 + AI 算力基础设施，七个功能位各有冠军企业卡位。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body mid" style="top:450px;">
+    <!-- 端侧 AI SoC 矩阵 -->
+    <div class="chip-section">
+      <div class="chip-gh"><span class="nm">端 侧 AI SoC 矩 阵</span><span class="ln"></span><span class="en">EDGE AI SoC</span></div>
+      <div class="champ-row c3">
+        <div class="champ">
+          <div class="hd"><div class="seal">听</div>
+            <div class="role"><div class="fn">AI 音频与穿戴 SoC</div><div class="rl">听</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">杰理科技 <span class="tg win">单项冠军</span></div>
+              <div class="p">蓝牙音视频 / TWS 耳机 / 智能穿戴 / AIoT 边缘计算 SoC</div></div>
+            <div class="f2"><div class="n">炬芯科技 <span class="tg ipo">上市</span></div>
+              <div class="p">端侧 AI 音频 SoC、智能无线音频 SoC</div></div>
+          </div>
+        </div>
+        <div class="champ">
+          <div class="hd"><div class="seal">看</div>
+            <div class="role"><div class="fn">AI 视觉与智能影像 SoC</div><div class="rl">看</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">全志科技 <span class="tg ipo">上市</span></div>
+              <div class="p">AI 眼镜 / 智慧视觉 / 机器人 MR / AIoT / 智能影像 SoC</div></div>
+            <div class="f2"><div class="n">中星微</div>
+              <div class="p">端侧 AI 视觉 SoC</div></div>
+          </div>
+        </div>
+        <div class="champ">
+          <div class="hd"><div class="seal">走</div>
+            <div class="role"><div class="fn">机器人主控 SoC</div><div class="rl">走</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">一微科技</div>
+              <div class="p">移动机器人 SLAM 主控 SoC</div></div>
+            <div class="f2" style="background:transparent;border-style:dashed;">
+              <div class="p" style="margin-top:0;color:var(--ink-4)">机器人「行走与定位」的端侧大脑</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 端侧配套芯片 -->
+    <div class="chip-section">
+      <div class="chip-gh"><span class="nm">端 侧 配 套 芯 片</span><span class="ln"></span><span class="en">SUPPORTING CHIP</span></div>
+      <div class="champ-row c2">
+        <div class="champ">
+          <div class="hd"><div class="seal">记</div>
+            <div class="role"><div class="fn">存储主控</div><div class="rl">记</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">妙存科技 <span class="tg win">国家级小巨人</span></div>
+              <div class="p">嵌入式存储主控芯片、NAND Flash 控制器</div></div>
+          </div>
+        </div>
+        <div class="champ">
+          <div class="hd"><div class="seal">控</div>
+            <div class="role"><div class="fn">实时控制 MCU</div><div class="rl">控</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">极海半导体</div>
+              <div class="p">工业通用 MCU、车规级 MCU</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 算力与数据中心基础设施 -->
+    <div class="chip-section" style="margin-bottom:0;">
+      <div class="chip-gh"><span class="nm">AI 算 力 与 数 据 中 心 基 础 设 施</span><span class="ln"></span><span class="en">COMPUTE INFRA</span></div>
+      <div class="champ-row c2">
+        <div class="champ">
+          <div class="hd"><div class="seal">算</div>
+            <div class="role"><div class="fn">GPU / GPGPU</div><div class="rl">算</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">芯动科技</div>
+              <div class="p">风华系列——全功能 GPU / GPGPU</div></div>
+          </div>
+        </div>
+        <div class="champ">
+          <div class="hd"><div class="seal">电</div>
+            <div class="role"><div class="fn">AI 数据中心供电芯片</div><div class="rl">电</div></div></div>
+          <div class="firms2">
+            <div class="f2"><div class="n">英诺赛科 <span class="tg ipo">港股</span></div>
+              <div class="p">硅基氮化镓 GaN 功率半导体 IDM · 英伟达 800V 直流电源架构合作商名录中唯一的中国芯片企业</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">芯</span> CHAMPIONS · 7 张冠军卡</span>
+    <span class="pageno"><span class="now">05</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P06 · 嵌 · 应用层 A（存量产业）  (04 · 1/2)
+     =================================================================== -->
+<div class="poster alt p-dense" id="p06">
+  <div class="grid-bg"></div><div class="glow g1"></div>
+  <div class="ghost tr">嵌</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 04 · EMBED</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">嵌</div>
+      <div class="meta">
+        <div class="bignum">04 · AI「嵌入」存量优势产业</div>
+        <div class="ttl">深度赋能实体经济 · <span class="hi">智能制造深度协同</span></div>
+        <div class="sub">应用层 200 家（占 66.01%）、专利 136 件（占 63.85%）——AI 嵌入实体产业，行业场景密、存量产业基础强。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="app-head">
+      <div class="ah"><div class="v">200<span class="pct">家</span></div>
+        <div class="d"><div class="k">应用层企业数量</div><div class="l">占比 66.01% · 全链最厚</div></div></div>
+      <div class="ah"><div class="v">136<span class="pct">件</span></div>
+        <div class="d"><div class="k">应用层专利</div><div class="l">占比 63.85%</div></div></div>
+    </div>
+
+    <div class="seg">
+      <div class="sh"><div class="ic">制</div><div class="nm">AI + 智能制造</div>
+        <div class="ct"><span class="n">27</span><span class="u">家</span></div></div>
+      <div class="items">
+        <div class="it"><div class="co">格力金湾工厂<span class="star">★</span></div>
+          <div class="ds">「领航级」智能工厂，<b>广东唯一</b>入选企业——AI 视觉检测、工业机器人、智能装备。</div></div>
+      </div>
+    </div>
+
+    <div class="seg">
+      <div class="sh"><div class="ic">软</div><div class="nm">AI 应用软件</div>
+        <div class="ct"><span class="n">27</span><span class="u">家</span></div>
+        <span class="tag">B2B 垂直赛道</span></div>
+      <div class="items">
+        <div class="it"><div class="co">金山办公</div>
+          <div class="ds">AI+办公软件——<b>WPS AI 3.0</b>、Office 智能体 WPS 灵犀。</div></div>
+        <div class="it"><div class="co">远光软件</div>
+          <div class="ds">企业级 AI 软件——<b>远光九天灵境</b> AI 原生平台。</div></div>
+      </div>
+    </div>
+
+    <div class="seg" style="margin-bottom:0;">
+      <div class="sh"><div class="ic">端</div><div class="nm">AI 终端</div>
+        <div class="ct"><span class="n">17</span><span class="u">家</span></div>
+        <span class="tag">多点开花</span></div>
+      <div class="items">
+        <div class="it"><div class="co">星纪魅族</div>
+          <div class="ds"><b>Flyme AIOS</b>、AI 手机、StarV AI 眼镜、Flyme Auto 智能座舱。</div></div>
+        <div class="it"><div class="co">奔图 / 莫界</div>
+          <div class="ds">奔图科技 AI 打印一体机 · 莫界科技 AI+AR 眼镜。</div></div>
+        <div class="it"><div class="co">云上智城 / 无界方舟</div>
+          <div class="ds">云上智城 AI 导览眼镜 · 无界方舟「奇多多」AI 学伴机器人。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">嵌</span> EMBED · 应用层全景 1/2</span>
+    <span class="pageno"><span class="now">06</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P07 · 嵌 · 应用层 B（先锋场景）  (04 · 2/2)
+     =================================================================== -->
+<div class="poster p-dense" id="p07">
+  <div class="grid-bg"></div><div class="glow g2"></div>
+  <div class="ghost br">嵌</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 04 · FRONTIER</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">嵌</div>
+      <div class="meta">
+        <div class="bignum">04 · 先锋引领 · 全域渗透</div>
+        <div class="ttl">具身智能先锋引领，<span class="hi">城市全域渗透</span></div>
+        <div class="sub">从模型走向机器人本体，从低空到海洋，从行业大模型到垂类落地——珠海特色场景全面展开。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body mid">
+    <div class="seg">
+      <div class="sh"><div class="ic">具</div><div class="nm">具身智能</div>
+        <span class="tag">从模型走向机器人本体</span></div>
+      <div class="items">
+        <div class="it"><div class="co">智元机器人</div>
+          <div class="ds">康养机器人，共建<b>具身智能应用创新中心</b>。</div></div>
+        <div class="it"><div class="co">傲意科技</div>
+          <div class="ds"><b>ROHand</b> 灵巧手。</div></div>
+      </div>
+    </div>
+
+    <div class="seg">
+      <div class="sh"><div class="ic">海</div><div class="nm">AI + 低空经济 / 海洋经济</div>
+        <span class="tag">珠海特色场景</span></div>
+      <div class="items">
+        <div class="it"><div class="co">览众科技</div>
+          <div class="ds">微型共轴无人机——<b>X050 / X100 / X300</b>。</div></div>
+        <div class="it"><div class="co">云洲智能</div>
+          <div class="ds">智能无人船艇。</div></div>
+        <div class="it"><div class="co">珠海海洋</div>
+          <div class="ds"><b>「湾区伶仃号」</b>大型深远海养殖平台，自动化、智能化养殖。</div></div>
+      </div>
+    </div>
+
+    <div class="seg" style="margin-bottom:0;">
+      <div class="sh"><div class="ic">模</div><div class="nm">AI 行业大模型</div>
+        <span class="tag">走向垂类落地</span></div>
+      <div class="items">
+        <div class="it"><div class="co">智元机器人</div>
+          <div class="ds">开发<b>「好房子 + 康养 + 安防 + 泛零售」</b>四大行业模型。</div></div>
+        <div class="it"><div class="co">智谱 + 华发</div>
+          <div class="ds">珠海华发空间——城市级 <b>GLM 大模型空间</b>。</div></div>
+        <div class="it"><div class="co">东华发思特</div>
+          <div class="ds"><b>神农新论</b> AI 大模型——农业大模型。</div></div>
+        <div class="it"><div class="co">深译未来</div>
+          <div class="ds"><b>葡语大模型</b>。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">嵌</span> FRONTIER · 应用层全景 2/2</span>
+    <span class="pageno"><span class="now">07</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P08 · 核 · 香洲主核  (05 · 1/2)
+     =================================================================== -->
+<div class="poster alt p-dense" id="p08">
+  <div class="grid-bg"></div><div class="glow g1"></div>
+  <div class="ghost tr">核</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 05 · XIANGZHOU</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">核</div>
+      <div class="meta">
+        <div class="bignum">05 · 珠海 AI 看香洲</div>
+        <div class="ttl">香洲主核——<span class="hi">模数融合、软硬协同、场景牵引</span></div>
+        <div class="sub">帮模型找到数据、帮数据找到场景、帮场景形成产品——香洲是珠海 AI 的核心承载区。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body mid">
+    <div class="xz-metrics">
+      <div class="xm"><div class="k">AI 竞争力指数</div><div class="v">57.23</div>
+        <div class="rk"><span class="rank-chip">广东 9</span></div></div>
+      <div class="xm"><div class="k">产业集聚指数</div><div class="v">66.79</div>
+        <div class="rk"><span class="rank-chip">广东 7</span></div></div>
+      <div class="xm"><div class="k">AI 企业</div><div class="v">234<span class="u">家</span></div>
+        <div class="share">占全市 85.71%</div></div>
+      <div class="xm"><div class="k">AI 专利</div><div class="v">110<span class="u">件</span></div>
+        <div class="share">占全市 86.61%</div></div>
+      <div class="xm"><div class="k">AI 融资</div><div class="v">14<span class="u">笔</span></div>
+        <div class="share">占全市 93.33%</div></div>
+      <div class="xm"><div class="k">AI 人才</div><div class="v">210<span class="u">人</span></div>
+        <div class="share">占全市 71.92%</div></div>
+    </div>
+
+    <div class="scene">
+      <div class="st">珠海 AI 的「主场景区」</div>
+      <div class="pts">
+        <div class="pt"><div class="h">场景开放</div>
+          <div class="b">发布 <b>216</b> 个应用场景、<b>87</b> 项能力、<b>218</b> 个创新产品。</div></div>
+        <div class="pt"><div class="h">模数空间</div>
+          <div class="b">引育大模型企业超 <b>85</b> 家、垂类模型超 <b>170</b> 个。</div></div>
+        <div class="pt"><div class="h">硬科技集聚</div>
+          <div class="b">集聚 <b>全志科技、炬芯科技、芯动科技</b> 等 AI 芯片硬科技企业。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">核</span> XIANGZHOU · 香洲主核</span>
+    <span class="pageno"><span class="now">08</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P09 · 核 · 高新破圈 + 横琴出海  (05 · 2/2)
+     =================================================================== -->
+<div class="poster p-dense" id="p09">
+  <div class="grid-bg"></div><div class="glow g2"></div>
+  <div class="ghost br">核</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">CHAPTER 05 · HIGH-TECH × HENGQIN</div>
+  </div>
+  <div class="ruler top"></div>
+
+  <div class="sec">
+    <div class="row">
+      <div class="seal">核</div>
+      <div class="meta">
+        <div class="bignum">05 · 高新破圈 · 横琴出海</div>
+        <div class="ttl">高新具身智能主阵地 · <span class="hi">横琴 AI 出海</span></div>
+        <div class="sub">高新区以「芯片·部件·本体·场景」筑具身智能主阵地，横琴以「AI 出海 × 跨境数据」占独特生态位。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="h3">高新区 · 具身智能主阵地<span class="en">EMBODIED AI</span></div>
+    <div class="chain" style="margin-bottom:18px;">
+      <div class="crow"><div class="part">大脑 · 全志科技</div><div class="co">端侧 AI 芯片</div>
+        <div class="ds">机器人「大脑」——主控与端侧推理</div></div>
+      <div class="crow"><div class="part">慧眼 · 宇航电子</div><div class="co">机器视觉芯片</div>
+        <div class="ds">机器人「慧眼」——视觉感知</div></div>
+      <div class="crow"><div class="part">手部 · 傲意科技</div><div class="co">ROHand 灵巧手</div>
+        <div class="ds">机器人「手部神经」——精细操作</div></div>
+      <div class="crow"><div class="part">底座 · 英搏尔+极海</div><div class="co">电驱系统 + MCU</div>
+        <div class="ds">机器人「运动与控制底座」</div></div>
+      <div class="crow"><div class="part">本体 · 智元机器人</div><div class="co">本体 + AI 大脑</div>
+        <div class="ds">发布通用具身基座模型「智元启元 GO-1」· 场景落地</div></div>
+    </div>
+
+    <div class="h3">横琴粤澳深度合作区 · 琴澳协同出海<span class="en">CROSS-BORDER</span></div>
+    <div class="qin-cols">
+      <div class="qcol">
+        <div class="qh"><span class="nu">01</span><span class="nm">30 分钟跨境科研转化圈</span></div>
+        <div class="items"><div class="it"><div class="co">澳门研发 → 横琴转化</div>
+          <div class="ds">珠海澳大科技研究院 + 澳门大学国家重点实验室——<b>澳门前端研发→横琴产业转化</b>。</div></div></div>
+      </div>
+      <div class="qcol">
+        <div class="qh"><span class="nu">02</span><span class="nm">面向葡语国家的 AI 出海「黄金通道」</span></div>
+        <div class="items"><div class="it"><div class="co">深绎未来</div>
+          <div class="ds">葡语大模型 <b>DeeCo-Model</b>——跨境商贸、跨国会议、文化出海（短剧）等场景。</div></div></div>
+      </div>
+      <div class="qcol">
+        <div class="qh"><span class="nu">03</span><span class="nm">数据安全跨境流动</span></div>
+        <div class="items">
+          <div class="it"><div class="co">粤澳医疗可信数据空间</div>
+            <div class="ds">「澳门+横琴+珠海」跨境医疗数据合作试点——病历、影像、检验报告安全跨境共享，支撑 <b>AI 辅助诊断、智慧医疗</b>。</div></div>
+          <div class="it"><div class="co">国际跨境可信数据空间·澳琴站</div>
+            <div class="ds">为澳琴数字贸易国际枢纽港提供<b>数据跨境、隐私保护、规则互操作</b>。</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">核</span> HIGH-TECH × HENGQIN</span>
+    <span class="pageno"><span class="now">09</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+
+<!-- ===================================================================
+     P10 · 收尾 · 关于
+     =================================================================== -->
+<div class="poster closing" id="p10">
+  <div class="grid-bg"></div><div class="glow g1"></div><div class="glow g2"></div>
+  <div class="ghost br">脑</div>
+
+  <div class="brand-bar">
+    <div class="left"><span class="logo-mark"></span><span class="wm">DIKI · BRAIN</span>
+      <span class="pl">产业大脑 · 数说系列</span></div>
+    <div class="right">ABOUT · 数字底座</div>
+  </div>
+  <div class="ruler top"></div>
+  <div class="corner tl"></div><div class="corner br"></div>
+
+  <div class="clo">
+    <div class="eyebrow">DIKI · BRAIN · 数据底座</div>
+    <h2>产业大脑<br><span class="hi">AI 产业的数字底座</span></h2>
+    <div class="sub">
+      以 AI 产业大脑为底座，为珠海市 AI 产业提供 <b>底数摸盘、精准洞察与决策支撑</b>——
+      产业链 / 创新链 / 人才链 / 资金链，四链贯通；产业概览 / 图谱 / 指数 / 技术分析，全景透视。
+    </div>
+
+    <div class="modules">
+      <div class="mod"><div class="mh">产业概览</div><div class="ml">产业链 · 创新链 · 人才链 · 资金链</div></div>
+      <div class="mod"><div class="mh">产业图谱</div><div class="ml">全景图 · 优劣势环节 · 上链企业 · 企业画像</div></div>
+      <div class="mod"><div class="mh">产业指数</div><div class="ml">集聚 · 创新 · 成长 · 特色 · 综合竞争力</div></div>
+      <div class="mod"><div class="mh">技术分析</div><div class="ml">全球专利 · 城市对标 · 科创企业 · 研发人才</div></div>
+    </div>
+
+    <div class="contact">
+      <div class="lt">
+        <div class="lb">CONTACT · 联 系 方 式</div>
+        <div class="ph">185 8821 0558</div>
+        <div class="tip">详情请咨询客服微信</div>
+      </div>
+      <div class="qr">
+        <div class="ph-qr"><div class="grid"><span class="fp tl"></span><span class="fp tr"></span><span class="fp bl"></span></div></div>
+        <div class="lab">扫码添加客服</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler bot"></div>
+  <div class="foot">
+    <span class="lbl"><span class="ch">脑</span> ABOUT · 关于我们</span>
+    <span class="pageno"><span class="now">10</span><span class="sep">/</span><span class="total">10</span></span>
+  </div>
+</div>
+
+<script>
+  // 刻度尺：动态生成 31 个刻度
+  document.querySelectorAll('.ruler').forEach(r=>{
+    for(let i=0;i<31;i++) r.appendChild(document.createElement('i'));
+  });
+</script>
+</body>
+</html>
